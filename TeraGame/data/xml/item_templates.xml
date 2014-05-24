@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<item_templates xmlns="http://angelis.com/item_templates" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://angelis.com/item_templates ../schema/item_templates.xsd ">
+    <item_template item_id="98">
+        <item_action action_type="SPAWN_CAMPFIRE" stamina_gain="1" rate="2" />
+    </item_template>
+    <item_template item_id="7100">
+        <item_action action_type="BURN_CHARM"/>
+    </item_template>
+    <item_template item_id="7104">
+        <item_action action_type="BURN_CHARM"/>
+    </item_template>
+    <item_template item_id="7108">
+        <item_action action_type="BURN_CHARM"/>
+    </item_template>
+    <item_template item_id="70117">
+        <item_action action_type="SPAWN_CAMPFIRE" stamina_gain="1" rate="5" />
+    </item_template>
+    <item_template item_id="6064">
+        <item_action action_type="DRINK_POTION" mp_gain="50" rate="1" duration="12" />
+    </item_template>
+    <item_template item_id="338">
+        <item_action action_type="CAST_SKILL" skill_id="60401201" />
+    </item_template>
+    <item_template item_id="339">
+        <item_action action_type="CAST_SKILL" skill_id="60401300" />
+    </item_template>
+</item_templates>

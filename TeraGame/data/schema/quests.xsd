@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://angelis.com/quests" xmlns:xsd="http://angelis.com/quests" xmlns:base="http://angelis.com/base" elementFormDefault="qualified">
+    <!-- IMPORTS -->
+    <import schemaLocation="base.xsd" namespace="http://angelis.com/base" />
+    
+    <!-- TYPES -->
+    <simpleType name="QuestIconType">
+        <restriction base="string">
+            <enumeration value="NORMAL"/>
+            <enumeration value="STORY"/>
+            <enumeration value="REPEATABLE"/>
+        </restriction>
+    </simpleType>
+    
+    <simpleType name="QuestStepType">
+        <restriction base="string">
+            <enumeration value="TALK"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="QuestStepsType">
+        <attribute name="type" type="xsd:QuestStepType" />
+        <attribute name="value" type="integer" />
+    </complexType>
+
+    <complexType name="QuestType">
+        <sequence>
+            <element name="step" type="xsd:QuestStepsType" minOccurs="0" maxOccurs="unbounded" />
+        </sequence>
+        <attribute name="quest_id" type="integer" />
+        <attribute name="quest_type" type="xsd:QuestIconType" />
+        <attribute name="start_npc_full_id" type="integer" />
+        <attribute name="required_level" type="integer" />
+        <attribute name="need_quest" type="integer" use="optional" />
+        <attribute name="reward_exp" type="integer" />
+        <attribute name="reward_money" type="integer" />
+    </complexType>
+    
+    <complexType name="QuestsType">
+        <sequence>
+            <element name="quest" type="xsd:QuestType" />
+        </sequence>
+    </complexType>
+    
+    <!-- CONTENT -->
+    <element name="quests" type="xsd:QuestsType" />
+</schema>

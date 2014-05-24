@@ -1,0 +1,85 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.angelis</groupId>
+    <artifactId>TeraBuilder</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>../TeraCommon</module>
+        <module>../TeraGame</module>
+        <module>../TeraLauncher</module>
+        <module>../TeraTools</module>
+    </modules>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <tasks>
+                                <property name="common" location="${project.basedir}/../TeraCommon" />
+                                <property name="game" location="${project.basedir}/../TeraGame" />
+                                <property name="launcher" location="${project.basedir}/../TeraLauncher" />
+                                <property name="tools" location="${project.basedir}/../TeraTools" />
+                                
+                                <property name="build.dist" location="${project.basedir}/bin" />
+                                <property name="build.dist.game" location="${project.basedir}/bin/game" />
+                                <property name="build.dist.launcher" location="${project.basedir}/bin/launcher" />
+                                <property name="build.dist.tools" location="${project.basedir}/bin/tools" />
+                                
+                                <delete dir="${build.dist}" />
+                                <mkdir dir="${build.dist}" />
+                                <mkdir dir="${build.dist.game}" />
+                                <mkdir dir="${build.dist.game}/lib" />
+                                <mkdir dir="${build.dist.game}/conf" />
+                                <mkdir dir="${build.dist.game}/data" />
+                                <mkdir dir="${build.dist.launcher}" />
+                                <mkdir dir="${build.dist.tools}" />
+                                
+                                <!-- TERA GAME -->
+                                <copy todir="${build.dist.game}">
+                                    <fileset dir="${game}/target">
+                                        <include name="TeraGame.jar" />
+                                    </fileset>
+									<fileset dir="${game}/bin">
+										<include name="*.bat" />
+										<include name="*.sh" />
+									</fileset>
+                                </copy>
+                                <copy todir="${build.dist.game}/lib">
+                                    <fileset dir="${common}/lib">
+                                        <include name="gnu-crypto-2.1.0.jar" />
+                                    </fileset>
+                                </copy>
+                                <copy todir="${build.dist.game}/conf">
+                                    <fileset dir="${game}/conf">
+                                        <include name="*.xml" />
+                                        <include name="*.properties" />
+                                    </fileset>
+                                </copy>
+                                <copy todir="${build.dist.game}/data">
+                                    <fileset dir="${game}/data" includes="**" />
+                                </copy>
+                                
+                                <!-- TERA TOOLS -->
+                                <copy todir="${build.dist.tools}">
+                                    <fileset dir="${tools}/target">
+                                        <include name="TeraTools.jar" />
+                                    </fileset>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
