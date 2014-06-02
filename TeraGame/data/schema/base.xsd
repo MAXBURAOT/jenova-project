@@ -12,6 +12,7 @@
             <enumeration value="ARCHER" />
             <enumeration value="PRIEST" />
             <enumeration value="MYSTIC" />
+            <enumeration value="REAPER" />
         </restriction>
     </simpleType>
     <simpleType name="RaceType">

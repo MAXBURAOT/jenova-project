@@ -30,7 +30,7 @@ import com.angelis.tera.game.models.player.craft.CraftStats;
 import com.angelis.tera.game.models.player.gather.GatherStatInfo;
 import com.angelis.tera.game.models.player.gather.GatherStats;
 import com.angelis.tera.game.models.player.quest.QuestList;
-import com.angelis.tera.game.models.quest.QuestData;
+import com.angelis.tera.game.models.quest.QuestEnv;
 import com.angelis.tera.game.models.skill.Skill;
 import com.angelis.tera.game.models.storage.Storage;
 import com.angelis.tera.game.models.visible.WorldPosition;
@@ -149,9 +149,12 @@ public class PlayerMapper extends DatabaseMapper<PlayerEntity, Player> {
         
         // QUESTLIST
         final Set<QuestEntity> quests = new FastSet<>();
-        for (final QuestData questData : model.getQuestList().getQuestDatas()) {
-            final QuestEntity questEntity = new QuestEntity(questData.getQuest().getId());
-            questEntity.setStep(questData.getStep());
+        for (final QuestEnv questEnv : model.getQuestList().getQuestEnvs()) {
+            final QuestEntity questEntity = new QuestEntity();
+            questEntity.setQuestId(questEnv.getQuest().getId());
+            questEntity.setCurrentStep(questEnv.getCurrentStep());
+            questEntity.setComplited(questEnv.isComplited());
+            questEntity.setPlayer(playerEntity);
             quests.add(questEntity);
         }
         playerEntity.setQuests(quests);
@@ -253,11 +256,12 @@ public class PlayerMapper extends DatabaseMapper<PlayerEntity, Player> {
         player.setSkillList(new SkillList(skillLevels));
         
         // QUESTLIST
-        final Set<QuestData> quests = new FastSet<>();
+        final Set<QuestEnv> quests = new FastSet<>();
         for (final QuestEntity questEntity : entity.getQuests()) {
-            final QuestData questData = new QuestData(QuestService.getInstance().getQuestById(questEntity.getQuestId()));
-            questData.setStep(questData.getStep());
-            quests.add(questData);
+            final QuestEnv questEnv = new QuestEnv(QuestService.getInstance().getQuestById(questEntity.getQuestId()));
+            questEnv.setCurrentStep(questEntity.getCurrentStep());
+            questEnv.setComplited(questEntity.isComplited());
+            quests.add(questEnv);
         }
         player.setQuestList(new QuestList(quests));
         

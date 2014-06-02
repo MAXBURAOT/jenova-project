@@ -20,7 +20,7 @@ public class SM_QUEST_VILLAGER_INFO extends TeraServerPacket {
     @Override
     protected void writeImpl(final TeraGameConnection connection, final ByteBuffer byteBuffer) {
         writeUid(byteBuffer, this.creature);
-        writeD(byteBuffer, questNpcIcon.value);
+        writeD(byteBuffer, this.questNpcIcon.value);
         writeC(byteBuffer, 1);
     }
 }

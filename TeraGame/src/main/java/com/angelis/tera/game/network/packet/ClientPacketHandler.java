@@ -13,8 +13,11 @@ import com.angelis.tera.game.network.packet.client.CM_ALLIANCE_INFO;
 import com.angelis.tera.game.network.packet.client.CM_BATTLEGROUND_WINDOW_OPEN;
 import com.angelis.tera.game.network.packet.client.CM_CANCEL_QUIT_GAME;
 import com.angelis.tera.game.network.packet.client.CM_CANCEL_QUIT_TO_CHARACTER_LIST;
+import com.angelis.tera.game.network.packet.client.CM_CHANNEL_LIST;
 import com.angelis.tera.game.network.packet.client.CM_CHARACTER_CREATE;
+import com.angelis.tera.game.network.packet.client.CM_CHARACTER_CREATE_ALLOWED;
 import com.angelis.tera.game.network.packet.client.CM_CHARACTER_DELETE;
+import com.angelis.tera.game.network.packet.client.CM_CHARACTER_LIST;
 import com.angelis.tera.game.network.packet.client.CM_CHARACTER_RESTORE;
 import com.angelis.tera.game.network.packet.client.CM_CHAT_INFO;
 import com.angelis.tera.game.network.packet.client.CM_CHECK_VERSION;
@@ -22,13 +25,15 @@ import com.angelis.tera.game.network.packet.client.CM_DIALOG;
 import com.angelis.tera.game.network.packet.client.CM_DIALOG_EVENT;
 import com.angelis.tera.game.network.packet.client.CM_ENCHANT_WINDOW_OPEN;
 import com.angelis.tera.game.network.packet.client.CM_ENTER_WORLD;
+import com.angelis.tera.game.network.packet.client.CM_GLYPH_REINIT;
 import com.angelis.tera.game.network.packet.client.CM_GUARD_PK_POLICY;
 import com.angelis.tera.game.network.packet.client.CM_HARDWARE_INFO;
 import com.angelis.tera.game.network.packet.client.CM_INSTANCERANK_WINDOW_OPEN;
-import com.angelis.tera.game.network.packet.client.CM_INVENTORY_OPEN;
 import com.angelis.tera.game.network.packet.client.CM_INVENTORY_ORDER;
+import com.angelis.tera.game.network.packet.client.CM_INVENTORY_SHOW;
 import com.angelis.tera.game.network.packet.client.CM_ITEM_SIMPLE_INFO;
 import com.angelis.tera.game.network.packet.client.CM_ITEM_USE;
+import com.angelis.tera.game.network.packet.client.CM_LOAD_TOPO_FIN;
 import com.angelis.tera.game.network.packet.client.CM_LOOKING_FOR_BATTELGROUND_WINDOW_OPEN;
 import com.angelis.tera.game.network.packet.client.CM_LOOKING_FOR_INSTANCE_WINDOW_OPEN;
 import com.angelis.tera.game.network.packet.client.CM_MAP_SHOW;
@@ -39,7 +44,6 @@ import com.angelis.tera.game.network.packet.client.CM_OPTION_SHOW_MASK;
 import com.angelis.tera.game.network.packet.client.CM_PLAYER_BLOCK_ADD;
 import com.angelis.tera.game.network.packet.client.CM_PLAYER_BLOCK_NOTE;
 import com.angelis.tera.game.network.packet.client.CM_PLAYER_BLOCK_REMOVE;
-import com.angelis.tera.game.network.packet.client.CM_PLAYER_CHANNEL_INFO;
 import com.angelis.tera.game.network.packet.client.CM_PLAYER_CHAT;
 import com.angelis.tera.game.network.packet.client.CM_PLAYER_CLIMB_START;
 import com.angelis.tera.game.network.packet.client.CM_PLAYER_COMPARE_ACHIEVEMENTS;
@@ -62,13 +66,9 @@ import com.angelis.tera.game.network.packet.client.CM_PLAYER_ITEM_TRASH;
 import com.angelis.tera.game.network.packet.client.CM_PLAYER_MOVE;
 import com.angelis.tera.game.network.packet.client.CM_PLAYER_REINIT_INSTANCES;
 import com.angelis.tera.game.network.packet.client.CM_PLAYER_REPORT;
-import com.angelis.tera.game.network.packet.client.CM_PLAYER_REQUEST;
 import com.angelis.tera.game.network.packet.client.CM_PLAYER_SELECT_CREATURE;
 import com.angelis.tera.game.network.packet.client.CM_PLAYER_SEND_REQUEST;
 import com.angelis.tera.game.network.packet.client.CM_PLAYER_SET_TITLE;
-import com.angelis.tera.game.network.packet.client.CM_PLAYER_SKILL_CANCEL;
-import com.angelis.tera.game.network.packet.client.CM_PLAYER_SKILL_INSTANCE_USE;
-import com.angelis.tera.game.network.packet.client.CM_PLAYER_SKILL_USE;
 import com.angelis.tera.game.network.packet.client.CM_PLAYER_UNEQUIP;
 import com.angelis.tera.game.network.packet.client.CM_PLAYER_UNMOUNT;
 import com.angelis.tera.game.network.packet.client.CM_PLAYER_WHISPER;
@@ -77,18 +77,19 @@ import com.angelis.tera.game.network.packet.client.CM_QUIT_GAME;
 import com.angelis.tera.game.network.packet.client.CM_QUIT_TO_CHARACTER_LIST;
 import com.angelis.tera.game.network.packet.client.CM_REIGN_INFO;
 import com.angelis.tera.game.network.packet.client.CM_REQUEST_ACCOUNT_OBJECT;
-import com.angelis.tera.game.network.packet.client.CM_REQUEST_CHARACTER_CREATE;
-import com.angelis.tera.game.network.packet.client.CM_REQUEST_CHARACTER_LIST;
 import com.angelis.tera.game.network.packet.client.CM_REQUEST_CHARACTER_NAME_CHECK;
 import com.angelis.tera.game.network.packet.client.CM_REQUEST_CHARACTER_NAME_CHECK_USED;
+import com.angelis.tera.game.network.packet.client.CM_REQUEST_CONTRACT;
 import com.angelis.tera.game.network.packet.client.CM_REQUEST_GAMESTAT_PING;
 import com.angelis.tera.game.network.packet.client.CM_REQUEST_SYSTEM_INFO;
 import com.angelis.tera.game.network.packet.client.CM_REQUEST_UNIQUE_OBJECT;
 import com.angelis.tera.game.network.packet.client.CM_SERVERGUILD_WINDOW_OPEN;
 import com.angelis.tera.game.network.packet.client.CM_SHOP_WINDOW_OPEN;
 import com.angelis.tera.game.network.packet.client.CM_SIMPLE_TIP_REPEATED_CHECK;
+import com.angelis.tera.game.network.packet.client.CM_SKILL_CANCEL;
+import com.angelis.tera.game.network.packet.client.CM_SKILL_INSTANCE_START;
+import com.angelis.tera.game.network.packet.client.CM_SKILL_START;
 import com.angelis.tera.game.network.packet.client.CM_UNK_ENTER_WORLD;
-import com.angelis.tera.game.network.packet.client.CM_UNK_ENTER_WORLD3;
 import com.angelis.tera.game.network.packet.client.CM_UPDATE_CONTENTS_PLAYTIME;
 import com.angelis.tera.game.network.packet.client.CM_USER_SETTINGS_SAVE;
 import com.angelis.tera.game.network.packet.client.CM_WELCOME_MESSAGE;
@@ -104,126 +105,127 @@ public class ClientPacketHandler {
         clientPackets.clear();
 
         // AUTH
-        addPacket((short) 0x4DBC, CM_CHECK_VERSION.class); // OK
-        addPacket((short) 0x9594, CM_ACCOUNT_AUTH.class); // OK
-        addPacket((short) 0x5DF4, CM_HARDWARE_INFO.class); // OK
+        addPacket((short) 0x4DBC, CM_CHECK_VERSION.class);
+        addPacket((short) 0x6274, CM_ACCOUNT_AUTH.class);
+        addPacket((short) 0xAFCF, CM_HARDWARE_INFO.class);
 
         // REQUEST
-        addPacket((short) 0xADBF, CM_REQUEST_CHARACTER_LIST.class); // OK
-        addPacket((short) 0xD781, CM_REQUEST_SYSTEM_INFO.class);
-        addPacket((short) 0xD8F2, CM_REQUEST_CHARACTER_CREATE.class); // OK
-        addPacket((short) 0x52D6, CM_REQUEST_CHARACTER_NAME_CHECK.class); // OK
-        addPacket((short) 0xEC3B, CM_REQUEST_CHARACTER_NAME_CHECK_USED.class); // OK
+        addPacket((short) 0xD781, CM_REQUEST_SYSTEM_INFO.class); // TODO
+        addPacket((short) 0x4E70, CM_REQUEST_CHARACTER_NAME_CHECK.class);
+        addPacket((short) 0x6A78, CM_REQUEST_CHARACTER_NAME_CHECK_USED.class);
+        addPacket((short) 0xC09A, CM_REQUEST_GAMESTAT_PING.class);
+        addPacket((short) 0x66FE, CM_REQUEST_CONTRACT.class);
 
         // CHARACTER
-        addPacket((short) 0xADF9, CM_CHARACTER_CREATE.class); // OK
-        addPacket((short) 0x8810, CM_CHARACTER_DELETE.class); // OK
-        addPacket((short) 0xB9AA, CM_CHARACTER_RESTORE.class); // OK
+        addPacket((short) 0x7843, CM_CHARACTER_CREATE_ALLOWED.class);
+        addPacket((short) 0x955D, CM_CHARACTER_LIST.class);
+        addPacket((short) 0xC79C, CM_CHARACTER_CREATE.class);
+        addPacket((short) 0x8188, CM_CHARACTER_DELETE.class);
+        addPacket((short) 0xD909, CM_CHARACTER_RESTORE.class);
 
         // MOUNT
-        addPacket((short) 0xF72E, CM_PLAYER_UNMOUNT.class); // OK
+        addPacket((short) 0xB118, CM_PLAYER_UNMOUNT.class);
 
         // ENTER WORLD
-        addPacket((short) 0xBAC8, CM_ENTER_WORLD.class); // OK
-        addPacket((short) 0xFCCC, CM_UNK_ENTER_WORLD.class); // OK
-        addPacket((short) 0x8FA2, CM_UPDATE_CONTENTS_PLAYTIME.class); // OK
-        addPacket((short) 0xAABA, CM_UNK_ENTER_WORLD3.class); // OK
-        addPacket((short) 0xD2E5, CM_SIMPLE_TIP_REPEATED_CHECK.class);
-        addPacket((short) 0xBC07, CM_PLAYER_CLIMB_START.class); // OK
-        addPacket((short) 0x61D2, CM_REQUEST_GAMESTAT_PING.class); // OK
-        addPacket((short) 0x7C4D, CM_USER_SETTINGS_SAVE.class); // OK
-        addPacket((short) 0xA614, CM_MOVIE_END.class); // OK
+        addPacket((short) 0x6716, CM_ENTER_WORLD.class);
+        addPacket((short) 0xA2EA, CM_UNK_ENTER_WORLD.class);
+        addPacket((short) 0xB808, CM_UPDATE_CONTENTS_PLAYTIME.class);
+        addPacket((short) 0xE26E, CM_LOAD_TOPO_FIN.class);
+        addPacket((short) 0x537E, CM_SIMPLE_TIP_REPEATED_CHECK.class);
+        addPacket((short) 0xD99E, CM_PLAYER_CLIMB_START.class);
+        addPacket((short) 0x7957, CM_USER_SETTINGS_SAVE.class);
+        addPacket((short) 0x74F3, CM_MOVIE_END.class);
 
         // OPTIONS
-        addPacket((short) 0xAE9D, CM_OPTION_SHOW_MASK.class); // OK
-        addPacket((short) 0x677D, CM_OPTION_SET_VISIBILITY_DISTANCE.class); // OK
+        addPacket((short) 0x984C, CM_OPTION_SHOW_MASK.class);
+        addPacket((short) 0x7A0C, CM_OPTION_SET_VISIBILITY_DISTANCE.class);
 
         // CHAT
-        addPacket((short) 0xC478, CM_PLAYER_CHAT.class); // OK
-        addPacket((short) 0x88BC, CM_PLAYER_WHISPER.class); // OK
+        addPacket((short) 0xD510, CM_PLAYER_CHAT.class);
+        addPacket((short) 0x88BC, CM_PLAYER_WHISPER.class); // TODO
 
         // DIALOG
-        addPacket((short) 0x8033, CM_NPC_CONTACT.class); // OK
-        addPacket((short) 0xAF2E, CM_DIALOG_EVENT.class); // OK
-        addPacket((short) 0xDA01, CM_DIALOG.class); // OK
+        addPacket((short) 0xAD01, CM_NPC_CONTACT.class);
+        addPacket((short) 0x8E26, CM_DIALOG_EVENT.class);
+        addPacket((short) 0xAA56, CM_DIALOG.class);
         
         // ALLIANCE
-        addPacket((short) 0xF900, CM_ALLIANCE_INFO.class); // OK
+        addPacket((short) 0xEDBA, CM_ALLIANCE_INFO.class);
 
+        // SKILL
+        addPacket((short) 0x85BE, CM_SKILL_START.class);
+        addPacket((short) 0xE29D, CM_SKILL_INSTANCE_START.class);
+        addPacket((short) 0x8BB4, CM_SKILL_CANCEL.class);
+        addPacket((short) 0x738A, CM_GLYPH_REINIT.class);
+        
         // PLAYER
-        addPacket((short) 0xCDF0, CM_PLAYER_SKILL_USE.class); // OK
-        addPacket((short) 0xC2B7, CM_PLAYER_SKILL_INSTANCE_USE.class); // OK
-        addPacket((short) 0xD8B4, CM_PLAYER_SKILL_CANCEL.class); // OK
-        addPacket((short) 0x5A33, CM_CHAT_INFO.class); // OK
-        addPacket((short) 0xB3F3, CM_PLAYER_MOVE.class); // OK
-        addPacket((short) 0xCEF5, CM_PLAYER_ZONE_CHANGE.class); // OK
-        addPacket((short) 0xA762, CM_LOOKING_FOR_INSTANCE_WINDOW_OPEN.class);
-        addPacket((short) 0x8B7A, CM_LOOKING_FOR_BATTELGROUND_WINDOW_OPEN.class);
-        addPacket((short) 0xE8A2, CM_PLAYER_REPORT.class); // OK
-        addPacket((short) 0x56E0, CM_PLAYER_COMPARE_ACHIEVEMENTS.class); // OK
-        addPacket((short) 0xB532, CM_PLAYER_INSPECT.class); // OK
-        addPacket((short) 0xD50E, CM_PLAYER_SELECT_CREATURE.class); // OK
-        addPacket((short) 0x9CB0, CM_PLAYER_GATHER.class); // OK
-        addPacket((short) 0x5D3E, CM_PLAYER_DONJON_CLEAR_COUNT_LIST.class); // OK
+        addPacket((short) 0xEA4C, CM_CHAT_INFO.class);
+        addPacket((short) 0xFB20, CM_PLAYER_MOVE.class);
+        addPacket((short) 0x4EFF, CM_PLAYER_ZONE_CHANGE.class);
+        addPacket((short) 0xA762, CM_LOOKING_FOR_INSTANCE_WINDOW_OPEN.class); // TODO
+        addPacket((short) 0x8B7A, CM_LOOKING_FOR_BATTELGROUND_WINDOW_OPEN.class); // TODO
+        addPacket((short) 0xE8A2, CM_PLAYER_REPORT.class); // TODO
+        addPacket((short) 0x8DA7, CM_PLAYER_COMPARE_ACHIEVEMENTS.class);
+        addPacket((short) 0xB532, CM_PLAYER_INSPECT.class); // TODO
+        addPacket((short) 0xDE72, CM_PLAYER_SELECT_CREATURE.class);
+        addPacket((short) 0xC6F8, CM_PLAYER_GATHER.class);
+        addPacket((short) 0x5D3E, CM_PLAYER_DONJON_CLEAR_COUNT_LIST.class); // TODO
 
         // PROFIL
-        addPacket((short) 0xA493, CM_PLAYER_SET_TITLE.class); // OK
-        addPacket((short) 0x909B, CM_PLAYER_DESCRIPTION.class); // OK
-        addPacket((short) 0xA1A0, CM_PLAYER_REINIT_INSTANCES.class); // OK
-        addPacket((short) 0xE9BC, CM_PLAYER_DONJON_STATS_PVP.class); // OK
+        addPacket((short) 0x96A4, CM_PLAYER_SET_TITLE.class);
+        addPacket((short) 0x7653, CM_PLAYER_DESCRIPTION.class);
+        addPacket((short) 0x6DF5, CM_PLAYER_REINIT_INSTANCES.class);
+        addPacket((short) 0xE9BC, CM_PLAYER_DONJON_STATS_PVP.class); // TODO
 
-        // QUESTS
-        
         // INVENTORY
-        addPacket((short) 0x6F66, CM_INVENTORY_OPEN.class); // OK
-        addPacket((short) 0xF27F, CM_PLAYER_ITEM_MOVE.class); // OK
-        addPacket((short) 0x5367, CM_ITEM_USE.class); // OK
-        addPacket((short) 0xDADB, CM_ITEM_SIMPLE_INFO.class); // OK
-        addPacket((short) 0x8ABC, CM_INVENTORY_ORDER.class); // OK
-        addPacket((short) 0xA986, CM_PLAYER_UNEQUIP.class); // OK
-        addPacket((short) 0xA123, CM_PLAYER_EQUIP.class); // OK
-        addPacket((short) 0x8E6C, CM_PLAYER_EQUIPEMENT_ITEM_INFO.class); // OK
-        addPacket((short) 0xAB53, CM_PLAYER_DUNGEON_COOLTIME_LIST.class); // OK
-        addPacket((short) 0x94E0, CM_PLAYER_ITEM_TRASH.class); // OK
-        addPacket((short) 0x8B84, CM_PLAYER_DROP_ITEM_PICKUP.class); // OK
+        addPacket((short) 0xBD50, CM_INVENTORY_SHOW.class);
+        addPacket((short) 0xBFAE, CM_PLAYER_ITEM_MOVE.class);
+        addPacket((short) 0x7554, CM_ITEM_USE.class);
+        addPacket((short) 0xC681, CM_ITEM_SIMPLE_INFO.class);
+        addPacket((short) 0x573B, CM_INVENTORY_ORDER.class);
+        addPacket((short) 0xC3D9, CM_PLAYER_UNEQUIP.class);
+        addPacket((short) 0xBCD5, CM_PLAYER_EQUIP.class);
+        addPacket((short) 0xC8B7, CM_PLAYER_EQUIPEMENT_ITEM_INFO.class);
+        addPacket((short) 0xACA1, CM_PLAYER_DUNGEON_COOLTIME_LIST.class);
+        addPacket((short) 0xB106, CM_PLAYER_ITEM_TRASH.class);
+        addPacket((short) 0xB5EB, CM_PLAYER_DROP_ITEM_PICKUP.class);
 
         // MAP
-        addPacket((short) 0x8D02, CM_MAP_SHOW.class);
+        addPacket((short) 0x8D02, CM_MAP_SHOW.class); // TODO
 
         // ACTIVITIES
-        addPacket((short) 0xBB2F, CM_PLAYER_EMOTE.class); // OK
-        addPacket((short) 0xEACD, CM_ENCHANT_WINDOW_OPEN.class);
-        addPacket((short) 0xC238, CM_INSTANCERANK_WINDOW_OPEN.class);
-        addPacket((short) 0x5FB7, CM_BATTLEGROUND_WINDOW_OPEN.class);
+        addPacket((short) 0x4E89, CM_PLAYER_EMOTE.class);
+        addPacket((short) 0xEACD, CM_ENCHANT_WINDOW_OPEN.class); // TODO
+        addPacket((short) 0xC238, CM_INSTANCERANK_WINDOW_OPEN.class); // TODO
+        addPacket((short) 0x5FB7, CM_BATTLEGROUND_WINDOW_OPEN.class); // TODO
 
         // SOCIAL
-        addPacket((short) 0x52C4, CM_SERVERGUILD_WINDOW_OPEN.class);
-        addPacket((short) 0x8516, CM_PLAYER_FRIEND_LIST.class); // OK
-        addPacket((short) 0xA4F6, CM_PLAYER_FRIEND_ADD.class); // OK
-        addPacket((short) 0xA374, CM_PLAYER_FRIEND_REMOVE.class); // OK
-        addPacket((short) 0x5AC3, CM_PLAYER_FRIEND_NOTE.class); // OK
-        addPacket((short) 0x8537, CM_PLAYER_BLOCK_ADD.class); // OK
-        addPacket((short) 0xDA22, CM_PLAYER_BLOCK_REMOVE.class); // OK
-        addPacket((short) 0xA4EE, CM_PLAYER_BLOCK_NOTE.class); // OK
-        addPacket((short) 0x9860, CM_REIGN_INFO.class); // OK
-        addPacket((short) 0x984D, CM_GUARD_PK_POLICY.class); // OK
+        addPacket((short) 0x52C4, CM_SERVERGUILD_WINDOW_OPEN.class); // TODO
+        addPacket((short) 0xCEBC, CM_PLAYER_FRIEND_LIST.class);
+        addPacket((short) 0xAE41, CM_PLAYER_FRIEND_ADD.class);
+        addPacket((short) 0xDC58, CM_PLAYER_FRIEND_REMOVE.class);
+        addPacket((short) 0x63AE, CM_PLAYER_FRIEND_NOTE.class);
+        addPacket((short) 0xB1BA, CM_PLAYER_BLOCK_ADD.class);
+        addPacket((short) 0x50A3, CM_PLAYER_BLOCK_REMOVE.class);
+        addPacket((short) 0x63B0, CM_PLAYER_BLOCK_NOTE.class);
+        addPacket((short) 0xE726, CM_REIGN_INFO.class);
+        addPacket((short) 0x5A75, CM_GUARD_PK_POLICY.class);
 
         // TERA SHOP
-        addPacket((short) 0x58B7, CM_SHOP_WINDOW_OPEN.class); // OK
-        addPacket((short) 0xABA2, CM_REQUEST_UNIQUE_OBJECT.class); // OK
-        addPacket((short) 0xD046, CM_REQUEST_ACCOUNT_OBJECT.class); // OK
+        addPacket((short) 0xDEB6, CM_SHOP_WINDOW_OPEN.class);
+        addPacket((short) 0x9431, CM_REQUEST_UNIQUE_OBJECT.class);
+        addPacket((short) 0xA7A9, CM_REQUEST_ACCOUNT_OBJECT.class);
 
         // SYSTEM
-        addPacket((short) 0xD0A4, CM_WELCOME_MESSAGE.class); // OK
-        addPacket((short) 0xD1D2, CM_PLAYER_SEND_REQUEST.class); // OK
-        addPacket((short) 0x5C46, CM_PLAYER_REQUEST.class); // OK
-        addPacket((short) 0x69EC, CM_QUIT_TO_CHARACTER_LIST.class); // OK
-        addPacket((short) 0xC683, CM_CANCEL_QUIT_TO_CHARACTER_LIST.class); // OK
-        addPacket((short) 0xF270, CM_QUIT_GAME.class); // OK
-        addPacket((short) 0xC4C8, CM_CANCEL_QUIT_GAME.class); // OK
+        addPacket((short) 0xB047, CM_WELCOME_MESSAGE.class);
+        addPacket((short) 0xD1D2, CM_PLAYER_SEND_REQUEST.class); // TODO
+        addPacket((short) 0xD83A, CM_QUIT_TO_CHARACTER_LIST.class);
+        addPacket((short) 0x9D25, CM_CANCEL_QUIT_TO_CHARACTER_LIST.class);
+        addPacket((short) 0x513B, CM_QUIT_GAME.class);
+        addPacket((short) 0xCAE0, CM_CANCEL_QUIT_GAME.class);
 
         // CHANNEL
-        addPacket((short) 0x7ECF, CM_PLAYER_CHANNEL_INFO.class); // OK
+        addPacket((short) 0xDCA4, CM_CHANNEL_LIST.class);
     }
 
     public static Class<? extends AbstractClientPacket<TeraGameConnection>> getClientPacket(final short id) {

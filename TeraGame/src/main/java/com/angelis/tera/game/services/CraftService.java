@@ -6,7 +6,7 @@ import com.angelis.tera.game.models.player.Player;
 import com.angelis.tera.game.models.player.craft.CraftStats;
 import com.angelis.tera.game.models.player.craft.enums.CraftTypeEnum;
 import com.angelis.tera.game.network.connection.TeraGameConnection;
-import com.angelis.tera.game.network.packet.server.SM_PLAYER_CRAFT_STATS;
+import com.angelis.tera.game.network.packet.server.SM_CRAFT_STATS;
 
 public class CraftService extends AbstractService {
 
@@ -26,6 +26,10 @@ public class CraftService extends AbstractService {
         log.info("CraftService stopped");
     }
 
+    public void onPlayerCreate(final Player player) {
+        player.setCraftStats(new CraftStats());
+    }
+    
     public void learnCraft(final Player player, final CraftTypeEnum craftType, final Integer learnedLevels) {
         final CraftStats craftStats = player.getCraftStats();
         
@@ -52,7 +56,7 @@ public class CraftService extends AbstractService {
                 // TODO SYSTEM MESSAGE FOR "YOUR CRAFT HAS INCREASED"
         }
         
-        connection.sendPacket(new SM_PLAYER_CRAFT_STATS(player.getCraftStats()));
+        connection.sendPacket(new SM_CRAFT_STATS(player.getCraftStats()));
     }
     
     /** SINGLETON */

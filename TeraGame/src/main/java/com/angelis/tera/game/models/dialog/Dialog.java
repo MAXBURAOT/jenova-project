@@ -80,4 +80,8 @@ public class Dialog extends AbstractUniqueTeraModel {
     public void setPage(final int page) {
         this.page = page;
     }
+    
+    public void addPage() {
+        this.page++;
+    }
 }

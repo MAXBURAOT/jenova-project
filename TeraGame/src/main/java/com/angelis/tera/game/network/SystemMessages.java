@@ -37,8 +37,11 @@ public class SystemMessages {
     }
 
     // QUEST
-    public static final SM_SYSTEM_MESSAGE QUEST_STARTED(final String questFullId) {
-        return new SM_SYSTEM_MESSAGE(new String[] { "@624", "QuestName", "@quest:"+questFullId });
+    public static final SM_SYSTEM_MESSAGE QUEST_STARTED(final String questDialogId) {
+        return new SM_SYSTEM_MESSAGE(new String[] { "@624", "QuestName", "@quest:"+questDialogId });
+    }
+    public static final SM_SYSTEM_MESSAGE QUEST_COMPLITED(final String questDialogId) {
+        return new SM_SYSTEM_MESSAGE(new String[] { "@1511", "QuestName", "@quest:"+questDialogId });
     }
     
     // CAMPFIRE
@@ -153,6 +156,9 @@ public class SystemMessages {
     }
     public static SM_SYSTEM_MESSAGE ITEM_ADD(final String username, final String itemId, final String itemAmount) {
         return new SM_SYSTEM_MESSAGE(new String[] { "@379", "UserName", username, "ItemAmount", itemAmount, "ItemName", "@item:"+itemId });
+    }
+    public static SM_SYSTEM_MESSAGE MONEY_ADD(final String moneyAmount) {
+        return new SM_SYSTEM_MESSAGE(new String[] { "@380", "Money", moneyAmount });
     }
     public static SM_SYSTEM_MESSAGE ITEM_COOLDOWN(final String itemId) {
         return new SM_SYSTEM_MESSAGE(new String[] { "@1767", "ItemName", "@item:"+itemId });

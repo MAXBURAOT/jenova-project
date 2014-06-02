@@ -38,6 +38,7 @@
                                 <mkdir dir="${build.dist.game}/lib" />
                                 <mkdir dir="${build.dist.game}/conf" />
                                 <mkdir dir="${build.dist.game}/data" />
+                                <mkdir dir="${build.dist.game}/logs" />
                                 <mkdir dir="${build.dist.launcher}" />
                                 <mkdir dir="${build.dist.tools}" />
                                 
@@ -46,10 +47,10 @@
                                     <fileset dir="${game}/target">
                                         <include name="TeraGame.jar" />
                                     </fileset>
-									<fileset dir="${game}/bin">
-										<include name="*.bat" />
-										<include name="*.sh" />
-									</fileset>
+                                    <fileset dir="${game}/bin">
+                                        <include name="*.bat" />
+                                        <include name="*.sh" />
+                                    </fileset>
                                 </copy>
                                 <copy todir="${build.dist.game}/lib">
                                     <fileset dir="${common}/lib">

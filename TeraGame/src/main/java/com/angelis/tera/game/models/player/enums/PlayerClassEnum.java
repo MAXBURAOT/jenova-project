@@ -10,7 +10,9 @@ public enum PlayerClassEnum {
     SORCERER(4),
     ARCHER(5),
     PRIEST(6),
-    MYSTIC(7);
+    MYSTIC(7),
+    REAPER(8)
+    ;
     
     public final int value;
 

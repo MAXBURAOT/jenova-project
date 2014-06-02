@@ -14,24 +14,8 @@ import com.angelis.tera.game.models.storage.enums.InventorySlotEnum;
 
 public class Storage extends AbstractModel {
 
-    public final static EnumSet<InventorySlotEnum> PLAYER_EQUIPEMENT = EnumSet.of(
-        InventorySlotEnum.WEAPON,
-        InventorySlotEnum.ARMOR,
-        InventorySlotEnum.GLOVES,
-        InventorySlotEnum.FOOT,
-        InventorySlotEnum.HAIR,
-        InventorySlotEnum.FACE
-    );
-
-    public static final EnumSet<InventorySlotEnum> PLAYER_ADVANCED_EQUIPEMENT = EnumSet.of(
-        InventorySlotEnum.WEAPON,
-        InventorySlotEnum.EARING_LEFT,
-        InventorySlotEnum.EARING_RIGHT,
-        InventorySlotEnum.ARMOR,
-        InventorySlotEnum.GLOVES,
-        InventorySlotEnum.FOOT
-    );
-
+    public static final StorageItem NEW_STORAGE_ITEM = new StorageItem(0);
+    
     private StorageTypeEnum storageType;
     private Map<Integer, StorageItem> storageItems;
     private int size;
@@ -118,12 +102,20 @@ public class Storage extends AbstractModel {
         return this.getStorageItemBySlot(slot) == null;
     }
 
-    public StorageItem getStorageItemByInventorySlot(final InventorySlotEnum inventorySlot) {
+    public StorageItem getStorageItemByInventorySlot(final InventorySlotEnum inventorySlot, final StorageItem defaultValue) {
         if (inventorySlot == null) {
             return null;
         }
         
-        return this.getStorageItemBySlot(inventorySlot.value);
+        StorageItem storageItem = this.getStorageItemBySlot(inventorySlot.value);
+        if (storageItem == null) {
+            storageItem = defaultValue;
+        }
+        return storageItem;
+    }
+    
+    public StorageItem getStorageItemByInventorySlot(final InventorySlotEnum inventorySlot) {
+        return this.getStorageItemByInventorySlot(inventorySlot, null);
     }
 
     public int getStorageItemIdByInventorySlot(final InventorySlotEnum inventorySlot) {

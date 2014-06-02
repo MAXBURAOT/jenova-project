@@ -1,32 +1,35 @@
 package com.angelis.tera.game.models.player.quest;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javolution.util.FastList;
+import javolution.util.FastMap;
 import javolution.util.FastSet;
 
 import com.angelis.tera.game.models.quest.Quest;
-import com.angelis.tera.game.models.quest.QuestData;
+import com.angelis.tera.game.models.quest.QuestEnv;
+import com.angelis.tera.game.models.quest.enums.QuestStepTypeEnum;
 
 public class QuestList {
-    public final Set<QuestData> questDatas;
+
+    public final Set<QuestEnv> questEnvs;
 
     public QuestList() {
-        this.questDatas = new FastSet<>();
+        this.questEnvs = new FastSet<>();
     }
     
-    public QuestList(final Set<QuestData> questDatas) {
-        this.questDatas = questDatas;
+    public QuestList(final Set<QuestEnv> questDatas) {
+        this.questEnvs = questDatas;
     }
     
-    public QuestData addQuest(final Quest quest) {
-        final QuestData questData = new QuestData(quest);
-        questData.setStep(1);
-        questData.setCounters(new FastList<Integer>());
-        this.questDatas.add(questData);
+    public QuestEnv addQuest(final Quest quest) {
+        final QuestEnv questEnv = new QuestEnv(quest);
+        questEnv.setCounters(new FastMap<Integer, Integer>());
+        this.questEnvs.add(questEnv);
         
-        return questData;
+        return questEnv;
     }
     
     public void removeQuest(final Quest quest) {
@@ -34,10 +37,10 @@ public class QuestList {
             return;
         }
         
-        final Iterator<QuestData> itr = this.questDatas.iterator();
+        final Iterator<QuestEnv> itr = this.questEnvs.iterator();
         while (itr.hasNext()) {
-            final QuestData questData = itr.next();
-            if (questData.getQuest().equals(quest)) {
+            final QuestEnv questEnv = itr.next();
+            if (questEnv.getQuest().equals(quest)) {
                 itr.remove();
                 break;
             }
@@ -46,8 +49,8 @@ public class QuestList {
     
     public boolean hasQuest(final Quest quest) {
         boolean hasQuest = false;
-        for (final QuestData questData : this.questDatas) {
-            if (questData.getQuest().equals(quest)) {
+        for (final QuestEnv questEnv : this.questEnvs) {
+            if (questEnv.getQuest().equals(quest)) {
                 hasQuest = true;
                 break;
             }
@@ -55,18 +58,75 @@ public class QuestList {
         return hasQuest;
     }
     
-    public final Set<QuestData> getQuestDatas() {
-       return this.questDatas;
+    public final Set<QuestEnv> getQuestEnvs() {
+       return this.questEnvs;
+    }
+    
+    public final Set<QuestEnv> getQuestEnvsByStepType(final QuestStepTypeEnum questStepType) {
+        final Set<QuestEnv> questEnvs = new FastSet<>();
+        for (final QuestEnv questEnv : this.questEnvs) {
+            if (questEnv.getCurrentQuestStep().getQuestStepType() == questStepType) {
+                questEnvs.add(questEnv);
+            }
+        }
+        return questEnvs;
+     }
+    
+    public QuestEnv getQuestEnv(final Quest quest) {
+        QuestEnv questEnvForQuest = null;
+        for (final QuestEnv questEnv : this.questEnvs) {
+            if (questEnv.getQuest().equals(quest)) {
+                questEnvForQuest = questEnv;
+                break;
+            }
+        }
+        return questEnvForQuest;
+    }
+    
+    public QuestEnv getQuestEnv(final int questId) {
+        QuestEnv questEnvForQuest = null;
+        for (final QuestEnv questEnv : this.questEnvs) {
+            if (questEnv.getQuest().getId() == questId) {
+                questEnvForQuest = questEnv;
+                break;
+            }
+        }
+        return questEnvForQuest;
     }
 
     public int getQuestStep(final Quest quest) {
         int step = 0;
-        for (final QuestData questData : this.questDatas) {
-            if (questData.getQuest().equals(quest)) {
-                step = questData.getStep();
+        for (final QuestEnv questEnv : this.questEnvs) {
+            if (questEnv.getQuest().equals(quest)) {
+                step = questEnv.getCurrentStep();
                 break;
             }
         }
         return step;
+    }
+
+    public List<Quest> getComplitedQuest() {
+        final List<Quest> quests = new FastList<>();
+        for (final QuestEnv questEnv : this.questEnvs) {
+            if (questEnv.isComplited()) {
+                quests.add(questEnv.getQuest());
+            }
+        }
+        return quests;
+    }
+    
+    public boolean hasCompletedRequiredQuest(final List<Integer> requiredQuests) {
+        final boolean hasCompletedQuest = true;
+        for (final Integer questId : requiredQuests) {
+            final QuestEnv getQuestEnv = this.getQuestEnv(questId);
+            if (getQuestEnv == null) {
+                return false;
+            }
+            
+            if (!getQuestEnv.isComplited()) {
+                return false;
+            }
+        }
+        return hasCompletedQuest;
     }
 }

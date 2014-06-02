@@ -6,10 +6,14 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.angelis.tera.game.models.drop.enums.DropChanceEnum;
+import com.angelis.tera.game.models.drop.enums.ItemCategoryEnum;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name="drop", namespace="http://angelis.com/base")
 public class DropEntity {
+    
+    @XmlAttribute(name = "category", required = false)
+    private ItemCategoryEnum itemCategory;
     
     @XmlAttribute(name = "chance")
     private DropChanceEnum dropChance;
@@ -22,6 +26,13 @@ public class DropEntity {
     
     @XmlAttribute(name = "item_id")
     private int itemId;
+
+    public ItemCategoryEnum getItemCategory() {
+        if (itemCategory == null) {
+            itemCategory = ItemCategoryEnum.NONE;
+        }
+        return itemCategory;
+    }
 
     public DropChanceEnum getDropChance() {
         return dropChance;

@@ -2,6 +2,7 @@ package com.angelis.tera.game.models.drop;
 
 import com.angelis.tera.common.model.AbstractModel;
 import com.angelis.tera.game.models.drop.enums.DropChanceEnum;
+import com.angelis.tera.game.models.drop.enums.ItemCategoryEnum;
 
 public class Drop extends AbstractModel {
 
@@ -14,6 +15,7 @@ public class Drop extends AbstractModel {
     }
 
     private DropChanceEnum dropChance;
+    private ItemCategoryEnum itemCategory;
     private int maxAmount;
     private int minAmount;
     private int itemId;
@@ -24,6 +26,14 @@ public class Drop extends AbstractModel {
 
     public void setDropChance(final DropChanceEnum dropChance) {
         this.dropChance = dropChance;
+    }
+
+    public ItemCategoryEnum getItemCategory() {
+        return itemCategory;
+    }
+
+    public void setItemCategory(final ItemCategoryEnum itemCategory) {
+        this.itemCategory = itemCategory;
     }
 
     public int getMaxAmount() {

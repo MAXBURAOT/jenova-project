@@ -7,7 +7,7 @@ import com.angelis.tera.game.models.creature.Creature;
 import com.angelis.tera.game.models.creature.CreatureCurrentStats;
 import com.angelis.tera.game.models.player.Player;
 import com.angelis.tera.game.models.player.enums.PlayerModeEnum;
-import com.angelis.tera.game.network.packet.server.SM_PLAYER_STATS;
+import com.angelis.tera.game.network.packet.server.SM_PLAYER_STATS_UPDATE;
 import com.angelis.tera.game.services.VisibleService;
 import com.angelis.tera.game.tasks.AbstractTask;
 import com.angelis.tera.game.tasks.TaskTypeEnum;
@@ -60,7 +60,7 @@ public class CreatureStatsModifierTask extends AbstractTask<Creature> {
                     creatureCurrentStats.addRe(-10);
                 }
             }
-            VisibleService.getInstance().sendPacketForVisible(this.linkedObject, new SM_PLAYER_STATS(player));
+            VisibleService.getInstance().sendPacketForVisible(this.linkedObject, new SM_PLAYER_STATS_UPDATE(player));
         }
     }
 }

@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 import com.angelis.tera.game.network.connection.TeraGameConnection;
 import com.angelis.tera.game.network.packet.TeraClientPacket;
-import com.angelis.tera.game.network.packet.server.SM_OPCODE_LESS_PACKET;
+import com.angelis.tera.game.network.packet.server.SM_VISITED_SECTION_LIST;
 
 public class CM_UPDATE_CONTENTS_PLAYTIME extends TeraClientPacket {
 
@@ -14,12 +14,12 @@ public class CM_UPDATE_CONTENTS_PLAYTIME extends TeraClientPacket {
 
     @Override
     protected void readImpl() {
-        readB(68);
+        readB(20);
     }
 
     @Override
     protected void runImpl() {
-        this.getConnection().sendPacket(new SM_OPCODE_LESS_PACKET("12C9020008000800180001000000020000000600000018000000010000000200000007000000"));
+        this.getConnection().sendPacket(new SM_VISITED_SECTION_LIST());
     }
 
 }

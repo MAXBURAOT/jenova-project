@@ -7,6 +7,7 @@ import com.angelis.tera.game.network.packet.ClientPacketHandler;
 import com.angelis.tera.game.network.packet.ServerPacketHandler;
 import com.angelis.tera.game.services.AdminService;
 import com.angelis.tera.game.services.MountService;
+import com.angelis.tera.game.services.QuestService;
 import com.angelis.tera.game.services.SpawnService;
 import com.angelis.tera.game.services.UserService;
 import com.angelis.tera.game.services.WorldService;
@@ -33,6 +34,7 @@ public class ReloadCommand extends AbstractAdminCommand {
                 XMLService.getInstance().restart();
                 SpawnService.getInstance().restart();
                 MountService.getInstance().restart();
+                QuestService.getInstance().restart();
                 WorldService.getInstance().doOnAllOnlinePlayer(new Function<Player>() {
                     @Override
                     public void call(final Player player) {

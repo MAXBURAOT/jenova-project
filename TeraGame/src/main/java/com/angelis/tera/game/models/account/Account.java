@@ -119,6 +119,15 @@ public class Account extends AbstractModel {
         this.locale = locale;
     }
 
+    public final boolean haveCharacterWithLevel(final int level) {
+        for (final Player player : this.getPlayers()) {
+            if (player.getLevel() >= level) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

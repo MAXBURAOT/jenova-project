@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.angelis.tera.common.xml.entity.AbstractXMLEntity;
+import com.angelis.tera.game.models.quest.QuestRewardTypeEnum;
 import com.angelis.tera.game.models.quest.enums.QuestIconTypeEnum;
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -30,17 +31,35 @@ public class QuestEntity extends AbstractXMLEntity {
     @XmlAttribute(name = "required_level")
     private int requiredLevel;
 
-    @XmlAttribute(name = "need_quest")
-    private int needQuest;
-
-    @XmlAttribute(name = "reward_exp")
-    private int rewardExp;
-
-    @XmlAttribute(name = "reward_money")
-    private int rewardMoney;
+    @XmlAttribute(name = "experience_reward")
+    private int experienceReward;
+    
+    @XmlAttribute(name = "money_reward")
+    private int moneyReward;
+    
+    @XmlAttribute(name = "reward_type")
+    private QuestRewardTypeEnum questRewardType;
+    
+    @XmlAttribute(name = "policy_points_reward")
+    private int policyPointsReward;
+    
+    @XmlAttribute(name = "alliance_contribution_points_reward")
+    private int allianceContributionPointsReward;
+    
+    @XmlAttribute(name = "reputation_points_reward")
+    private int reputationPointsReward;
+    
+    @XmlAttribute(name = "credit_points_reward")
+    private int creditPointsReward;
+    
+    @XmlElement(name = "required_quest", required = false, namespace = "http://angelis.com/quests")
+    private List<QuestRequiredEntity> requiredQuests;
     
     @XmlElement(name = "step", namespace = "http://angelis.com/quests")
     private List<QuestStepEntity> questSteps;
+    
+    @XmlElement(name = "reward", namespace = "http://angelis.com/quests")
+    private List<QuestRewardEntity> questRewards;
 
     public int getQuestId() {
         return questId;
@@ -58,20 +77,47 @@ public class QuestEntity extends AbstractXMLEntity {
         return requiredLevel;
     }
 
-    public int getNeedQuest() {
-        return needQuest;
+    public int getExperienceReward() {
+        return experienceReward;
     }
 
-    public int getRewardExp() {
-        return rewardExp;
+    public int getMoneyReward() {
+        return moneyReward;
     }
 
-    public int getRewardMoney() {
-        return rewardMoney;
+    public QuestRewardTypeEnum getQuestRewardType() {
+        if (questRewardType == null) {
+            questRewardType = QuestRewardTypeEnum.ALL;
+        }
+        return questRewardType;
+    }
+
+    public int getPolicyPointsReward() {
+        return policyPointsReward;
+    }
+
+    public int getAllianceContributionPointsReward() {
+        return allianceContributionPointsReward;
+    }
+
+    public int getReputationPointsReward() {
+        return reputationPointsReward;
+    }
+
+    public int getCreditPointsReward() {
+        return creditPointsReward;
+    }
+
+    public List<QuestRequiredEntity> getRequiredQuests() {
+        return requiredQuests;
     }
 
     public List<QuestStepEntity> getQuestSteps() {
         return questSteps;
+    }
+
+    public List<QuestRewardEntity> getQuestRewards() {
+        return questRewards;
     }
 
     @Override

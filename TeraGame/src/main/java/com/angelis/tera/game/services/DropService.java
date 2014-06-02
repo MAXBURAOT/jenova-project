@@ -18,6 +18,7 @@ import com.angelis.tera.game.models.creature.Creature;
 import com.angelis.tera.game.models.creature.TeraCreature;
 import com.angelis.tera.game.models.drop.Drop;
 import com.angelis.tera.game.models.drop.DropItem;
+import com.angelis.tera.game.models.drop.enums.ItemCategoryEnum;
 import com.angelis.tera.game.models.enums.ObjectFamilyEnum;
 import com.angelis.tera.game.models.enums.StorageTypeEnum;
 import com.angelis.tera.game.models.group.Group;
@@ -54,17 +55,34 @@ public class DropService extends AbstractService {
         log.info("DropService stopped");
     }
 
+    public List<Drop> getLootFromCreature(final TeraCreature creature, final ItemCategoryEnum itemCategory) {
+        final List<Drop> drops = new FastList<>();
+
+        final List<Drop> creatureDrops = this.drops.get(creature.getId());
+        if (creatureDrops != null && !creatureDrops.isEmpty()) {
+            for (final Drop drop : creatureDrops) {
+                if (drop.getItemCategory() == itemCategory) {
+                    drops.add(drop);
+                }
+            }
+        }
+
+        return drops;
+    }
+    
     public final List<DropItem> generateDrop(final TeraCreature creature, final Player player) {
         final List<DropItem> dropItems = new FastList<>();
 
-        final List<Drop> drops = this.drops.get(creature.getId());
+        final List<Drop> drops = this.getLootFromCreature(creature, ItemCategoryEnum.NONE);
         if (drops == null) {
             return dropItems;
         }
 
         if (Rnd.chance(75)) {
             final int amount = (int) (10 * CreatureService.getInstance().getExperience(creature.getLevel()) / Rnd.get(20, 60));
-            dropItems.add(createDropItem(creature, player, Item.MONEY_ID, creature.getWorldPosition().clone(), amount, amount));
+            if (amount > 0) {
+                dropItems.add(createDropItem(creature, player, Item.MONEY_ID, creature.getWorldPosition().clone(), amount, amount));
+            }
         }
 
         for (final Drop drop : drops) {

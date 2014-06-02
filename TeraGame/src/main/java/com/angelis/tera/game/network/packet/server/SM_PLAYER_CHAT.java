@@ -21,21 +21,25 @@ public class SM_PLAYER_CHAT extends TeraServerPacket {
     
     @Override
     protected void writeImpl(final TeraGameConnection connection, final ByteBuffer byteBuffer) {
-        writeH(byteBuffer, 0); //Sender shift
-        writeH(byteBuffer, 0); //Message shift
+        final short senderShift = (short) byteBuffer.position();
+        writeH(byteBuffer, 0);
+        
+        final short messageShift = (short) byteBuffer.position();
+        writeH(byteBuffer, 0);
+
         writeD(byteBuffer, this.chatType.getValue());
 
         writeUid(byteBuffer, this.player);
 
-        writeC(byteBuffer, 0); //Blue shit
+        writeH(byteBuffer, 0); //Blue shit
         writeC(byteBuffer, player != null ? player.getAccount().getAccess() > 0 : false); //GM
 
         if (this.player != null) {
-            this.writeBufferPosition(byteBuffer, 4, Size.H);
+            this.writeBufferPosition(byteBuffer, senderShift, Size.H);
             writeS(byteBuffer, player.getName());
         }
 
-        this.writeBufferPosition(byteBuffer, 6, Size.H);
+        this.writeBufferPosition(byteBuffer, messageShift, Size.H);
         writeS(byteBuffer, this.message);
 
         writeC(byteBuffer, 0);

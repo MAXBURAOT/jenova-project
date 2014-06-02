@@ -60,6 +60,7 @@ public class Player extends Creature {
     private Channel channel;
     private CampFire activeCampFire;
     private Mount activeMount;
+    private Player activeDuelPlayer;
 
     public Player(final Integer abstractId) {
         super(abstractId, new PlayerController());
@@ -371,6 +372,14 @@ public class Player extends Creature {
 
     public void setActiveMount(final Mount activeMount) {
         this.activeMount = activeMount;
+    }
+
+    public Player getActiveDuelPlayer() {
+        return activeDuelPlayer;
+    }
+
+    public void setActiveDuelPlayer(final Player activeDuelPlayer) {
+        this.activeDuelPlayer = activeDuelPlayer;
     }
 
     public final TeraGameConnection getConnection() {

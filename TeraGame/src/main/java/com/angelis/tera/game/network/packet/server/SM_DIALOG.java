@@ -4,6 +4,8 @@ import java.nio.ByteBuffer;
 
 import com.angelis.tera.game.models.dialog.Dialog;
 import com.angelis.tera.game.models.dialog.DialogButton;
+import com.angelis.tera.game.models.quest.Quest;
+import com.angelis.tera.game.models.quest.QuestReward;
 import com.angelis.tera.game.network.connection.TeraGameConnection;
 import com.angelis.tera.game.network.packet.TeraServerPacket;
 
@@ -17,19 +19,24 @@ public class SM_DIALOG extends TeraServerPacket {
 
     @Override
     protected void writeImpl(final TeraGameConnection connection, final ByteBuffer byteBuffer) {
+        final Quest quest = this.dialog.getQuest();
+        int buttonsShift = 0;
+        int rewardShift = 0;
+        int itemsShift = 0;
+
         writeH(byteBuffer, (short) this.dialog.getDialogButtons().size()); //Buttons count
         
-        int buttonsShift = byteBuffer.position();
+        buttonsShift = byteBuffer.position();
         writeH(byteBuffer, 0); //First button shift
         
-        writeH(byteBuffer, (short) (this.dialog.getQuest() == null ? 0 : 1));
+        writeH(byteBuffer, (short) (quest == null ? 0 : 1));
         
-        final int rewardShift = byteBuffer.position();
+        rewardShift = byteBuffer.position();
         writeH(byteBuffer, 0);
 
         writeUid(byteBuffer, this.dialog.getNpc());
         writeD(byteBuffer, this.dialog.getPage()); // page
-        writeD(byteBuffer, this.dialog.getQuest() == null ? this.dialog.getNpc().getId() : this.dialog.getQuest().getId()); // dialogId
+        writeD(byteBuffer, quest == null ? this.dialog.getNpc().getId() : quest.getId()); // dialogId
         writeD(byteBuffer, this.dialog.getSpecial1()); // special1
         writeD(byteBuffer, 0); // special2
         writeD(byteBuffer, this.dialog.getPage()); // page
@@ -54,11 +61,46 @@ public class SM_DIALOG extends TeraServerPacket {
             writeS(byteBuffer, dialogButton.getText());
         }
         
-        if (this.dialog.getQuest() != null) {
+        if (quest != null) {
             this.writeBufferPosition(byteBuffer, rewardShift, Size.H);
             
-            writeH(byteBuffer, (short) byteBuffer.position());
-            writeB(byteBuffer, "0000000000000000000000000000F401000032000000000000000000000000000000000000000000000000000000");
+            writeH(byteBuffer, byteBuffer.position());
+            writeH(byteBuffer, 0);
+
+            if (quest.getQuestRewards() != null && !quest.getQuestRewards().isEmpty()) {
+                writeH(byteBuffer, (short) quest.getQuestRewards().size());
+                itemsShift = byteBuffer.position();
+                writeH(byteBuffer, 0);
+            } else {
+                writeD(byteBuffer, 0);
+            }
+            writeH(byteBuffer, quest.getQuestRewardType().value);
+            writeD(byteBuffer, 0);
+            writeH(byteBuffer, 0);
+            
+            writeD(byteBuffer, quest.getExperienceReward());
+            writeD(byteBuffer, quest.getMoneyReward());
+            
+            writeD(byteBuffer, 0);
+            writeD(byteBuffer, quest.getPolicyPointsReward());
+            writeD(byteBuffer, quest.getAllianceContributionPointsReward());
+
+            writeD(byteBuffer, 0);
+            writeD(byteBuffer, quest.getReputationPointsReward());
+            writeD(byteBuffer, quest.getCreditPointsReward());
+            
+            if (quest.getQuestRewards() != null && !quest.getQuestRewards().isEmpty()) {
+                for (final QuestReward questReward : quest.getQuestRewards()) {
+                    this.writeBufferPosition(byteBuffer, itemsShift, Size.H);
+
+                    writeH(byteBuffer, byteBuffer.position());
+                    itemsShift = byteBuffer.position();
+                    writeH(byteBuffer, 0);
+
+                    writeD(byteBuffer, questReward.getItemId());
+                    writeD(byteBuffer, questReward.getAmount());
+                }
+            }
         }
 /*
         if (this.quest != null) {

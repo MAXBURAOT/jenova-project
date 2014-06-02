@@ -54,6 +54,10 @@ public class StorageItem extends AbstractModel {
         this.creatorName = creatorName;
     }
 
+    public final int getItemId() {
+        return this.item != null ? this.item.getId() : 0;
+    }
+    
     @Override
     public int hashCode() {
         final int prime = 31;

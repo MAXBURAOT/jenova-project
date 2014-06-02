@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 import com.angelis.tera.game.network.connection.TeraGameConnection;
 import com.angelis.tera.game.network.packet.TeraClientPacket;
-import com.angelis.tera.game.network.packet.server.SM_OPCODE_LESS_PACKET;
+import com.angelis.tera.game.network.packet.server.SM_TRADEBROKER_HIGHEST_ITEM_LEVEL;
 
 public class CM_UNK_ENTER_WORLD extends TeraClientPacket {
 
@@ -19,7 +19,7 @@ public class CM_UNK_ENTER_WORLD extends TeraClientPacket {
 
     @Override
     protected void runImpl() {
-        this.getConnection().sendPacket(new SM_OPCODE_LESS_PACKET("46C6C7000000"));
+        this.getConnection().sendPacket(new SM_TRADEBROKER_HIGHEST_ITEM_LEVEL());
     }
 
 }

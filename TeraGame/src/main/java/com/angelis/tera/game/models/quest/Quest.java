@@ -10,10 +10,17 @@ public class Quest extends AbstractTeraModel {
     private QuestIconTypeEnum questType;
     private int startNpcFullId;
     private int requiredLevel;
-    private int needQuest;
-    private int rewardExp;
-    private int rewardMoney;
-    private List<QuestStep> steps;
+    private List<Integer> requiredQuests;
+    private List<QuestStep> questSteps;
+    
+    private int experienceReward;
+    private int moneyReward;
+    private int policyPointsReward;
+    private int allianceContributionPointsReward;
+    private int reputationPointsReward;
+    private int creditPointsReward;
+    private List<QuestReward> questRewards;
+    private QuestRewardTypeEnum questRewardType;
     
     public Quest(final Integer id) {
         super(id);
@@ -43,39 +50,87 @@ public class Quest extends AbstractTeraModel {
         this.requiredLevel = requiredLevel;
     }
 
-    public int getNeedQuest() {
-        return needQuest;
+    public List<Integer> getRequiredQuests() {
+        return requiredQuests;
     }
 
-    public void setNeedQuest(final int needQuest) {
-        this.needQuest = needQuest;
+    public void setRequiredQuests(final List<Integer> requiredQuest) {
+        this.requiredQuests = requiredQuest;
     }
 
-    public int getRewardExp() {
-        return rewardExp;
+    public List<QuestStep> getQuestSteps() {
+        return questSteps;
     }
 
-    public void setRewardExp(final int rewardExp) {
-        this.rewardExp = rewardExp;
+    public void setQuestSteps(final List<QuestStep> questSteps) {
+        this.questSteps = questSteps;
+    }
+    
+    public int getExperienceReward() {
+        return experienceReward;
     }
 
-    public int getRewardMoney() {
-        return rewardMoney;
+    public void setExperienceReward(final int experienceReward) {
+        this.experienceReward = experienceReward;
+    }
+    
+    public int getMoneyReward() {
+        return moneyReward;
+    }
+    
+    public void setMoneyReward(final int moneyReward) {
+        this.moneyReward = moneyReward;
+    }
+    
+    public int getPolicyPointsReward() {
+        return policyPointsReward;
+    }
+    
+    public void setPolicyPointsReward(final int policyPointsReward) {
+        this.policyPointsReward = policyPointsReward;
     }
 
-    public void setRewardMoney(final int rewardMoney) {
-        this.rewardMoney = rewardMoney;
+    public int getAllianceContributionPointsReward() {
+        return allianceContributionPointsReward;
+    }
+    
+    public void setAllianceContributionPointsReward(final int allianceContributionPointsReward) {
+        this.allianceContributionPointsReward = allianceContributionPointsReward;
+    }
+    
+    public int getReputationPointsReward() {
+        return reputationPointsReward;
+    }
+    
+    public void setReputationPointsReward(final int reputationPointsReward) {
+        this.reputationPointsReward = reputationPointsReward;
+    }
+    
+    public int getCreditPointsReward() {
+        return creditPointsReward;
+    }
+    
+    public void setCreditPointsReward(final int creditPointsReward) {
+        this.creditPointsReward = creditPointsReward;
     }
 
-    public List<QuestStep> getSteps() {
-        return steps;
+    public List<QuestReward> getQuestRewards() {
+        return questRewards;
     }
 
-    public void setSteps(final List<QuestStep> steps) {
-        this.steps = steps;
+    public void setQuestRewards(final List<QuestReward> questRewards) {
+        this.questRewards = questRewards;
     }
 
-    public final int getQuestFullId() {
-        return this.getId()*1000+1;
+    public QuestRewardTypeEnum getQuestRewardType() {
+        return questRewardType;
+    }
+
+    public void setQuestRewardType(final QuestRewardTypeEnum questRewardType) {
+        this.questRewardType = questRewardType;
+    }
+
+    public final int getFullId() {
+        return (this.getId() * 1000);
     }
 }

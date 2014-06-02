@@ -1,8 +1,11 @@
 package com.angelis.tera.game.xml.entity.quests;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import com.angelis.tera.game.models.quest.enums.QuestStepTypeEnum;
@@ -14,14 +17,14 @@ public class QuestStepEntity {
     @XmlAttribute(name = "type")
     private QuestStepTypeEnum questStepType;
 
-    @XmlAttribute(name = "value")
-    private int value;
+    @XmlElement(name = "step_value", namespace = "http://angelis.com/quests")
+    private List<QuestStepValueEntity> stepValues;;
 
     public QuestStepTypeEnum getQuestStepType() {
         return questStepType;
     }
 
-    public int getValue() {
-        return value;
+    public List<QuestStepValueEntity> getStepValues() {
+        return stepValues;
     }
 }

@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import com.angelis.tera.game.models.mount.Mount;
 import com.angelis.tera.game.models.player.Player;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_MOUNT;
-import com.angelis.tera.game.network.packet.server.SM_PLAYER_STATS;
+import com.angelis.tera.game.network.packet.server.SM_PLAYER_STATS_UPDATE;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_UNMOUNT;
 import com.angelis.tera.game.xml.entity.MountEntity;
 import com.angelis.tera.game.xml.entity.MountEntityHolder;
@@ -45,7 +45,7 @@ public class MountService extends AbstractService {
         player.setActiveMount(mount);
         BaseStatService.getInstance().affectCreatureCurrentStats(player);
         BaseStatService.getInstance().affectCreatureBonusStats(player);
-        player.getConnection().sendPacket(new SM_PLAYER_STATS(player));
+        player.getConnection().sendPacket(new SM_PLAYER_STATS_UPDATE(player));
     }
 
     public void onPlayerUnMount(final Player player) {
@@ -57,7 +57,7 @@ public class MountService extends AbstractService {
         player.setActiveMount(null);
         BaseStatService.getInstance().affectCreatureCurrentStats(player);
         BaseStatService.getInstance().affectCreatureBonusStats(player);
-        player.getConnection().sendPacket(new SM_PLAYER_STATS(player));
+        player.getConnection().sendPacket(new SM_PLAYER_STATS_UPDATE(player));
     }
     
     public void onPlayerDisconnect(final Player player) {

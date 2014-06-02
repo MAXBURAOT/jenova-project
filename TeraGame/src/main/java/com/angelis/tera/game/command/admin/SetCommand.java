@@ -5,7 +5,7 @@ import com.angelis.tera.game.models.account.Account;
 import com.angelis.tera.game.models.player.Player;
 import com.angelis.tera.game.network.connection.TeraGameConnection;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_EXPERIENCE_UPDATE;
-import com.angelis.tera.game.network.packet.server.SM_PLAYER_STATS;
+import com.angelis.tera.game.network.packet.server.SM_PLAYER_STATS_UPDATE;
 import com.angelis.tera.game.services.PlayerService;
 import com.angelis.tera.game.services.WorldService;
 
@@ -39,7 +39,7 @@ public class SetCommand extends AbstractAdminCommand {
             
             case SPEED:
                 targetPlayer.getCreatureCurrentStats().setSpeed(Integer.parseInt(arguments[2]));
-                targetPlayer.getConnection().sendPacket(new SM_PLAYER_STATS(targetPlayer));
+                targetPlayer.getConnection().sendPacket(new SM_PLAYER_STATS_UPDATE(targetPlayer));
             break;
         }
     }

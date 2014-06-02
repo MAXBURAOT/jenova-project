@@ -2,6 +2,7 @@
 <creature_spawns xmlns="http://angelis.com/creature_spawns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://angelis.com/creature_spawns ../../../../schema/creature_spawns.xsd "
 >
+<!-- Todo 
     <creature_spawn creature_type="60" id="1903" offensive="0" model_id="7209020">
         <spawn heading="-15813" mapId="7001" x="92902.05" y="-1374.7968" z="527.0" />
         <spawn heading="22455" mapId="7001" x="92826.85" y="-634.09326" z="572.0" />
@@ -2748,5 +2749,5 @@
         <spawn heading="13824" mapId="7001" x="110134.82" y="-2724.1975" z="3036.0" />
         <spawn heading="-16602" mapId="7001" x="111067.97" y="-3862.4976" z="2803.0" />
         <spawn heading="12522" mapId="7001" x="110143.91" y="-2691.4465" z="3041.0" />
-    </creature_spawn>
+    </creature_spawn> -->
 </creature_spawns>

@@ -18,20 +18,21 @@ public class ReadWriteProcessor extends Processor {
     /** LOGGER */
     private static Logger log = Logger.getLogger(ReadWriteProcessor.class.getName());
 
-    public ReadWriteProcessor(AbstractServer abstractServer) {
+    public ReadWriteProcessor(final AbstractServer abstractServer) {
         super(abstractServer);
     }
 
+    @Override
     public void dispatch() {
         try {
-            int selection = this.selector.select();
+            final int selection = this.selector.select();
             if (selection == 0) {
                 return;
             }
 
-            Iterator<SelectionKey> iterator = this.selector.selectedKeys().iterator();
+            final Iterator<SelectionKey> iterator = this.selector.selectedKeys().iterator();
             while (iterator.hasNext()) {
-                SelectionKey selectionKey = iterator.next();
+                final SelectionKey selectionKey = iterator.next();
                 iterator.remove();
 
                 if (!selectionKey.isValid()) {
@@ -39,7 +40,7 @@ public class ReadWriteProcessor extends Processor {
                     continue;
                 }
 
-                AbstractTeraConnection connection = (AbstractTeraConnection) selectionKey.attachment();
+                final AbstractTeraConnection connection = (AbstractTeraConnection) selectionKey.attachment();
                 if (connection == null) {
                     log.error("Connection is null");
                     continue;
@@ -53,7 +54,7 @@ public class ReadWriteProcessor extends Processor {
                     case SelectionKey.OP_WRITE:
                         this.doWrite(selectionKey);
                     break;
-                    
+
                     case SelectionKey.OP_READ | SelectionKey.OP_WRITE:
                         this.doRead(selectionKey);
                         if (selectionKey.isValid()) {
@@ -63,26 +64,26 @@ public class ReadWriteProcessor extends Processor {
                 }
             }
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             throw new RuntimeException("IOException in ReadProcessor");
         }
     }
 
-    private final <C extends AbstractTeraConnection> void doRead(SelectionKey selectionKey) {
+    private final <C extends AbstractTeraConnection> void doRead(final SelectionKey selectionKey) {
         @SuppressWarnings("unchecked")
-        C connection = (C) selectionKey.attachment();
-        SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
-        
-        ByteBuffer buffer = connection.readBuffer();
-        ByteBuffer cryptedBuffer = ByteBuffer.allocate(buffer.capacity());
+        final C connection = (C) selectionKey.attachment();
+        final SocketChannel socketChannel = (SocketChannel) selectionKey.channel();
+
+        final ByteBuffer buffer = connection.readBuffer();
+        final ByteBuffer cryptedBuffer = ByteBuffer.allocate(buffer.capacity());
         cryptedBuffer.order(ByteOrder.LITTLE_ENDIAN);
         cryptedBuffer.clear();
-        
+
         int readCount = 0;
         try {
             readCount = socketChannel.read(cryptedBuffer);
         }
-        catch (IOException e) {
+        catch (final IOException e) {
             log.error(e.getMessage(), e);
             connection.close();
             return;
@@ -92,24 +93,25 @@ public class ReadWriteProcessor extends Processor {
             log.error("Closing connection due to reaching end of stream.");
             connection.close();
             return;
-        } else if (readCount == 0) {
+        }
+        else if (readCount == 0) {
             return;
         }
 
         cryptedBuffer.flip();
         connection.getCryptSession().decrypt(cryptedBuffer);
         cryptedBuffer.rewind();
-        
+
         buffer.put(cryptedBuffer);
         buffer.flip();
-        
+
         while (buffer.remaining() > 2) {
             if (connection.getState() == ConnectionState.AUTHENTICATED) {
                 if (buffer.remaining() < buffer.getShort(buffer.position())) {
                     break;
                 }
             }
-            
+
             if (!parse(connection, buffer)) {
                 log.error("Failed to parse data");
                 connection.close();
@@ -120,25 +122,25 @@ public class ReadWriteProcessor extends Processor {
         if (buffer.hasRemaining()) {
             log.error("Read buffer has remaining");
             buffer.compact();
-        } else {
+        }
+        else {
             buffer.clear();
         }
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
     }
 
-    private final <C extends AbstractTeraConnection> void doWrite(SelectionKey selectionKey) {
+    private final <C extends AbstractTeraConnection> void doWrite(final SelectionKey selectionKey) {
         @SuppressWarnings("unchecked")
-        C connection = (C) selectionKey.attachment();
-        SocketChannel channel = (SocketChannel) selectionKey.channel();
+        final C connection = (C) selectionKey.attachment();
+        final SocketChannel channel = (SocketChannel) selectionKey.channel();
 
-        ByteBuffer buffer = connection.writeBuffer();
+        final ByteBuffer buffer = connection.writeBuffer();
 
         /** Write remaining bytes before */
         if (buffer.hasRemaining()) {
             try {
                 channel.write(buffer);
             }
-            catch (IOException e) {
+            catch (final IOException e) {
                 connection.close();
                 return;
             }
@@ -148,9 +150,9 @@ public class ReadWriteProcessor extends Processor {
             if (!connection.hasPacketToWrite()) {
                 break;
             }
-            
+
             buffer.clear();
-            boolean writeSuccess = connection.writePacket(buffer);
+            final boolean writeSuccess = connection.writePacket(buffer);
             if (!writeSuccess) {
                 log.error("Write wasn't succefull");
                 buffer.limit(0);
@@ -161,7 +163,7 @@ public class ReadWriteProcessor extends Processor {
             try {
                 writeCount = channel.write(buffer);
             }
-            catch (IOException e) {
+            catch (final IOException e) {
                 log.error(e.getMessage(), e);
             }
 
@@ -169,7 +171,7 @@ public class ReadWriteProcessor extends Processor {
                 log.info("Write " + writeCount);
                 return;
             }
-            
+
             if (buffer.hasRemaining()) {
                 log.info("Write buffer has remaining");
                 return;
@@ -184,37 +186,39 @@ public class ReadWriteProcessor extends Processor {
         }
     }
 
-    private final boolean parse(AbstractTeraConnection connection, ByteBuffer buffer) {
+    private final boolean parse(final AbstractTeraConnection connection, final ByteBuffer buffer) {
         int size = 0;
         switch (connection.getState()) {
             case CONNECTED:
                 size = 128;
             break;
-            
+
             case AUTHENTICATED:
                 size = buffer.getShort();
                 if (size > 1) {
                     size -= 2;
-                } else if (size < 0) {
+                }
+                else if (size < 0) {
                     size = buffer.remaining();
                 }
             break;
-            
+
             default:
                 // should never happend
                 throw new RuntimeException();
         }
-        
+
         try {
             /** Copy packet to temp buffer for reading */
-            ByteBuffer tempBuffer = (ByteBuffer) buffer.slice().limit(size);
+            final ByteBuffer tempBuffer = (ByteBuffer) buffer.slice().limit(size);
             tempBuffer.order(ByteOrder.LITTLE_ENDIAN);
-    
+
             /** Update buffer position after this packet */
             buffer.position(buffer.position() + size);
-    
+
             return connection.readPacket(tempBuffer);
-        } catch (IllegalArgumentException e) {
+        }
+        catch (final IllegalArgumentException e) {
             log.warn("Error on parsing input from client - account: " + connection + " packet size: " + size + " real size:" + buffer.remaining(), e);
             return false;
         }

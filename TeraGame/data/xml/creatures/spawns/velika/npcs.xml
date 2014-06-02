@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <creature_spawns xmlns="http://angelis.com/creature_spawns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://angelis.com/creature_spawns ../../../../schema/creature_spawns.xsd "
->
+> <!-- Todo
     <creature_spawn creature_type="63" id="1009" offensive="0" model_id="7209020">
         <spawn heading="2730" mapId="1" x="1506.529" y="3072.2937" z="1744.0"/>
     </creature_spawn>
@@ -1206,5 +1206,5 @@
     </creature_spawn>
     <creature_spawn creature_type="63" id="1142" offensive="0" model_id="7209020">
         <spawn heading="0" mapId="1" x="-5888.273" y="9537.835" z="2182.0"/>
-    </creature_spawn>
+    </creature_spawn> -->
 </creature_spawns>

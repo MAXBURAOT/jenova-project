@@ -41,4 +41,9 @@
         <!-- TODO -->
         <skill id="10200" require_level="1" />
     </player_class_skill>
+    
+    <player_class_skill targetClass="REAPER">
+        <!-- TODO -->
+        <skill id="10200" require_level="1" />
+    </player_class_skill>
 </player_class_skills>

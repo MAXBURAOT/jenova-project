@@ -1,13 +1,11 @@
 package com.angelis.tera.game.network.packet.server;
 
 import java.nio.ByteBuffer;
-import java.util.Map.Entry;
 
 import com.angelis.tera.game.models.enums.StorageTypeEnum;
 import com.angelis.tera.game.models.player.Player;
 import com.angelis.tera.game.models.player.enums.PlayerRelationEnum;
 import com.angelis.tera.game.models.storage.Storage;
-import com.angelis.tera.game.models.storage.StorageItem;
 import com.angelis.tera.game.models.storage.enums.InventorySlotEnum;
 import com.angelis.tera.game.models.visible.WorldPosition;
 import com.angelis.tera.game.network.connection.TeraGameConnection;
@@ -55,10 +53,12 @@ public class SM_PLAYER_SPAWN extends TeraServerPacket {
         writeB(byteBuffer, this.player.getPlayerAppearance().getData());
 
         final Storage storage = this.player.getStorage(StorageTypeEnum.INVENTORY);
-        for (final Entry<InventorySlotEnum, StorageItem> entry : storage.getStorageItems(Storage.PLAYER_EQUIPEMENT).entrySet()) {
-            final StorageItem storageItem = entry.getValue();
-            writeD(byteBuffer,  (storageItem != null) ? storageItem.getItem().getId() : 0);
-        }
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.WEAPON, Storage.NEW_STORAGE_ITEM).getItemId());
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.ARMOR, Storage.NEW_STORAGE_ITEM).getItemId());
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.GLOVES, Storage.NEW_STORAGE_ITEM).getItemId());
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.FOOT, Storage.NEW_STORAGE_ITEM).getItemId());
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.HAIR, Storage.NEW_STORAGE_ITEM).getItemId());
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.FACE, Storage.NEW_STORAGE_ITEM).getItemId());
 
         writeC(byteBuffer, 1);
         
@@ -74,12 +74,13 @@ public class SM_PLAYER_SPAWN extends TeraServerPacket {
         writeD(byteBuffer, 0);
         writeD(byteBuffer, 0);
         writeD(byteBuffer, 0);
-        writeD(byteBuffer, 0);
-        writeD(byteBuffer, 0);
-        writeD(byteBuffer, 0);
-        writeD(byteBuffer, 0);
-        writeD(byteBuffer, 0);
-        writeD(byteBuffer, 0);
+        
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.HAIR_DECORATION, Storage.NEW_STORAGE_ITEM).getItemId());
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.MASK, Storage.NEW_STORAGE_ITEM).getItemId());
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.BACK, Storage.NEW_STORAGE_ITEM).getItemId());
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.WEAPON_APPEARANCE, Storage.NEW_STORAGE_ITEM).getItemId());
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.ARMOR_APPEARANCE, Storage.NEW_STORAGE_ITEM).getItemId());
+        writeD(byteBuffer, 0); //Unk possible Item?
         
         writeH(byteBuffer, 0);
         writeH(byteBuffer, 0);
@@ -90,7 +91,7 @@ public class SM_PLAYER_SPAWN extends TeraServerPacket {
         writeS(byteBuffer, this.player.getName()); //Name
 
         this.writeBufferPosition(byteBuffer, 6, Size.H);
-        writeS(byteBuffer, null); // TODO guild name
+        writeS(byteBuffer, this.player.getGuild() != null ? this.player.getGuild().getName() : "");
 
         this.writeBufferPosition(byteBuffer, 8, Size.H);
         writeS(byteBuffer, ""); //Unk1

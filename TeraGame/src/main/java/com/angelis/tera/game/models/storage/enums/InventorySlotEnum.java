@@ -16,8 +16,8 @@ public enum InventorySlotEnum {
     FACE(13),
     HAIR_DECORATION(14),
     MASK(15),
-    WEAPON_APPREANCE(16),
-    ARMOR_APPREANCE(17),
+    WEAPON_APPEARANCE(16),
+    ARMOR_APPEARANCE(17),
     BACK(18),
     ;
 

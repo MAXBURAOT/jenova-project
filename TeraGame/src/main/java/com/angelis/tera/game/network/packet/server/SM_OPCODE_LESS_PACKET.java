@@ -25,9 +25,4 @@ public class SM_OPCODE_LESS_PACKET extends TeraServerPacket {
     
     @Override
     public void writeOpcode(final ByteBuffer byteBuffer) {}
-    
-    @Override
-    public boolean showInDebug() {
-        return true;
-    }
 }

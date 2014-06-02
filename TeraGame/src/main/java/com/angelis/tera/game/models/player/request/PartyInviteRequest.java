@@ -4,7 +4,7 @@ import com.angelis.tera.game.models.player.Player;
 import com.angelis.tera.game.models.player.request.enums.RequestTypeEnum;
 import com.angelis.tera.game.network.SystemMessages;
 import com.angelis.tera.game.network.connection.TeraGameConnection;
-import com.angelis.tera.game.network.packet.server.SM_PLAYER_REQUEST_WAIT_WINDOW;
+import com.angelis.tera.game.network.packet.server.SM_REQUEST_CONTRACT;
 
 public class PartyInviteRequest extends Request {
 
@@ -33,7 +33,7 @@ public class PartyInviteRequest extends Request {
 
     @Override
     public void onAction() {
-        this.initiator.getConnection().sendPacket(new SM_PLAYER_REQUEST_WAIT_WINDOW(this));
+        this.initiator.getConnection().sendPacket(new SM_REQUEST_CONTRACT(this));
     }
 
     @Override

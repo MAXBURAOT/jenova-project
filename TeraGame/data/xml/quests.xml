@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <quests xmlns="http://angelis.com/quests" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://angelis.com/quests ../schema/quests.xsd ">
-    <quest quest_id="1301" quest_type="STORY" start_npc_full_id="21301105" required_level="1" reward_exp="500" reward_money="50">
-        <step type="TALK" value="21301014" />
-    </quest>
+    <import file="quests" skipRoot="true" />
 </quests>

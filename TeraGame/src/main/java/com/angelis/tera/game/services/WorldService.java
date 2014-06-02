@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import com.angelis.tera.common.utils.Function;
 import com.angelis.tera.game.models.channel.Channel;
 import com.angelis.tera.game.models.player.Player;
+import com.angelis.tera.game.models.player.enums.PlayerClassEnum;
 import com.angelis.tera.game.models.player.enums.PlayerModeEnum;
 import com.angelis.tera.game.network.TeleportLocations;
 import com.angelis.tera.game.network.connection.TeraGameConnection;
@@ -67,8 +68,16 @@ public class WorldService extends AbstractService {
         player.setLastOnlineTime(null);
         player.setPlayerMode(PlayerModeEnum.NORMAL);
         player.setZoneData(new byte[] { 1, 0, 0, 0, 2, 0, 0, 0, 7, 0, 0, 0 });
-        player.setLevel(1);
-        player.setWorldPosition(TeleportLocations.getStartingPoint());
+        player.setWorldPosition(TeleportLocations.getStandardStartingPoint());
+        
+        int level = 1;
+        if (player.getPlayerClass() == PlayerClassEnum.REAPER) {
+            level = 50;
+            player.setWorldPosition(TeleportLocations.getReaperStartingPoint());
+        } else {
+            player.setWorldPosition(TeleportLocations.getStandardStartingPoint());
+        }
+        player.setLevel(level);
     }
 
     public Player getOnlinePlayerWithName(final String name) {

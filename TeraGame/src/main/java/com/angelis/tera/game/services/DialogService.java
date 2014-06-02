@@ -59,11 +59,11 @@ public class DialogService extends AbstractService {
         if (creatureTitle != null) {
             switch (creatureTitle) {
                 case FLIGHT_MASTER:
-                    dialog.addDialogButton(new DialogButton(dialog, DialogIconEnum.CENTERED_GRAY, DialogStringEnum.FLIGHTPOINTS, new ShowFlyMapAction(player, dialog)));
+                    dialog.addDialogButton(new DialogButton(dialog, DialogIconEnum.CENTERED_GREEN, DialogStringEnum.FLIGHTPOINTS, new ShowFlyMapAction(player, dialog)));
                 break;
 
                 case BANK:
-                    dialog.addDialogButton(new DialogButton(dialog, DialogIconEnum.CENTERED_GRAY, DialogStringEnum.BANK, new ShowBankAction(player, dialog)));
+                    dialog.addDialogButton(new DialogButton(dialog, DialogIconEnum.CENTERED_GREEN, DialogStringEnum.BANK, new ShowBankAction(player, dialog)));
                 break;
             }
         }

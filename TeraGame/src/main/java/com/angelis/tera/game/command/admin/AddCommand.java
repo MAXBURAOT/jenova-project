@@ -8,7 +8,7 @@ import com.angelis.tera.game.models.player.Player;
 import com.angelis.tera.game.models.player.craft.enums.CraftTypeEnum;
 import com.angelis.tera.game.models.player.gather.enums.GatherTypeEnum;
 import com.angelis.tera.game.network.connection.TeraGameConnection;
-import com.angelis.tera.game.network.packet.server.SM_PLAYER_STATS;
+import com.angelis.tera.game.network.packet.server.SM_PLAYER_STATS_UPDATE;
 import com.angelis.tera.game.services.CraftService;
 import com.angelis.tera.game.services.GatherService;
 import com.angelis.tera.game.services.PlayerService;
@@ -40,7 +40,7 @@ public class AddCommand extends AbstractAdminCommand {
         switch (command) {
             case RIGHT:
                 targetPlayer.getController().addRight(RightEnum.valueOf(arguments[2].toUpperCase()));
-                targetPlayer.getConnection().sendPacket(new SM_PLAYER_STATS(targetPlayer));
+                targetPlayer.getConnection().sendPacket(new SM_PLAYER_STATS_UPDATE(targetPlayer));
                 targetPlayer.getKnownList().update();
             break;
 

@@ -3,8 +3,8 @@ package com.angelis.tera.game.models.player.request;
 import com.angelis.tera.game.models.AbstractUniqueTeraModel;
 import com.angelis.tera.game.models.player.Player;
 import com.angelis.tera.game.models.player.request.enums.RequestTypeEnum;
-import com.angelis.tera.game.network.packet.server.SM_PLAYER_REQUEST_ALLOWED;
-import com.angelis.tera.game.network.packet.server.SM_PLAYER_REQUEST_WAIT_WINDOW;
+import com.angelis.tera.game.network.packet.server.SM_REQUEST_CONTRACT_REPLY;
+import com.angelis.tera.game.network.packet.server.SM_REQUEST_CONTRACT;
 
 public abstract class Request extends AbstractUniqueTeraModel {
     
@@ -27,10 +27,10 @@ public abstract class Request extends AbstractUniqueTeraModel {
     }
 
     public final void doAction() {
-        this.initiator.getConnection().sendPacket(new SM_PLAYER_REQUEST_ALLOWED(this.requestType));
+        this.initiator.getConnection().sendPacket(new SM_REQUEST_CONTRACT_REPLY(this.requestType));
         
         if (this.check()) {
-            this.initiator.getConnection().sendPacket(new SM_PLAYER_REQUEST_WAIT_WINDOW(this));
+            this.initiator.getConnection().sendPacket(new SM_REQUEST_CONTRACT(this));
             this.initiator.getController().setRequest(this);
             
             this.onAction();

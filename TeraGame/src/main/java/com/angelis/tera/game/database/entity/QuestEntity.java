@@ -18,8 +18,11 @@ public class QuestEntity extends AbstractDatabaseEntity {
     @Column(name = "questId")
     private int questId;
 
-    @Column(name = "step")
-    private int step;
+    @Column(name = "current_step")
+    private int currentStep;
+    
+    @Column(name = "complited")
+    private boolean complited;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "player_id", nullable = false)
@@ -30,7 +33,6 @@ public class QuestEntity extends AbstractDatabaseEntity {
     }
 
     public QuestEntity() {
-
     }
 
     public int getQuestId() {
@@ -41,12 +43,20 @@ public class QuestEntity extends AbstractDatabaseEntity {
         this.questId = questId;
     }
 
-    public int getStep() {
-        return step;
+    public int getCurrentStep() {
+        return currentStep;
     }
 
-    public void setStep(final int step) {
-        this.step = step;
+    public void setCurrentStep(final int currentStep) {
+        this.currentStep = currentStep;
+    }
+
+    public boolean isComplited() {
+        return complited;
+    }
+
+    public void setComplited(final boolean complited) {
+        this.complited = complited;
     }
 
     public PlayerEntity getPlayer() {
@@ -55,5 +65,40 @@ public class QuestEntity extends AbstractDatabaseEntity {
 
     public void setPlayer(final PlayerEntity player) {
         this.player = player;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((player == null) ? 0 : player.hashCode());
+        result = prime * result + questId;
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!super.equals(obj)) {
+            return false;
+        }
+        if (!(obj instanceof QuestEntity)) {
+            return false;
+        }
+        final QuestEntity other = (QuestEntity) obj;
+        if (player == null) {
+            if (other.player != null) {
+                return false;
+            }
+        }
+        else if (!player.equals(other.player)) {
+            return false;
+        }
+        if (questId != other.questId) {
+            return false;
+        }
+        return true;
     }
 }

@@ -27,6 +27,10 @@ public class GatherService extends AbstractService {
         log.info("GatherService stopped");
     }
 
+    public void onPlayerCreate(final Player player) {
+        player.setGatherStats(new GatherStats());
+    }
+    
     public void learnGather(final Player player, final GatherTypeEnum gatherType, final Integer learnedLevels) {
         final GatherStats gatherStats = player.getGatherStats();
         

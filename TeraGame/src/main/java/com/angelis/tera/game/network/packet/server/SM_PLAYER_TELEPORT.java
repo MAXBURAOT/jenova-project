@@ -17,13 +17,14 @@ public class SM_PLAYER_TELEPORT extends TeraServerPacket {
 
     @Override
     protected void writeImpl(final TeraGameConnection connection, final ByteBuffer byteBuffer) {
+        final WorldPosition worldPosition = this.player.getWorldPosition();
+
         writeUid(byteBuffer, this.player);
         
-        final WorldPosition worldPosition = this.player.getWorldPosition();
         writeF(byteBuffer, worldPosition.getX());
         writeF(byteBuffer, worldPosition.getY());
         writeF(byteBuffer, worldPosition.getZ());
         writeH(byteBuffer, worldPosition.getHeading());
-        writeC(byteBuffer, this.player.getCreatureCurrentStats().isDead() ? 0 : 1);
+        writeH(byteBuffer, this.player.getCreatureCurrentStats().isDead() ? 0 : 1);
     }
 }

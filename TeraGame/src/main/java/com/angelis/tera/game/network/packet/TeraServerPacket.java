@@ -42,8 +42,8 @@ public abstract class TeraServerPacket extends AbstractServerPacket<TeraGameConn
         byteBuffer.flip();
         
         // Packet length
-        final short length = (short) byteBuffer.limit();
-        writePacketLength(byteBuffer, length);
+        final int length = byteBuffer.limit();
+        writePacketLength(byteBuffer, (short) length);
         
         if (this.showInDebug()) {
             log.info(PrintUtils.toHex(byteBuffer));
@@ -100,7 +100,7 @@ public abstract class TeraServerPacket extends AbstractServerPacket<TeraGameConn
         byteBuffer.position(position);
     }
     
-    public void completeByteBuffer(final TeraGameConnection connection, final ByteBuffer byteBuffer, final short length) {
+    public void completeByteBuffer(final TeraGameConnection connection, final ByteBuffer byteBuffer, final int length) {
         // Reset packet
         final ByteBuffer b = (ByteBuffer) byteBuffer.slice().limit(length);
         b.order(ByteOrder.LITTLE_ENDIAN);

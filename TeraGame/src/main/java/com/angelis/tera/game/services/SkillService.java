@@ -20,6 +20,7 @@ import com.angelis.tera.game.models.player.enums.RaceEnum;
 import com.angelis.tera.game.models.skill.Skill;
 import com.angelis.tera.game.models.skill.SkillArgs;
 import com.angelis.tera.game.network.SystemMessages;
+import com.angelis.tera.game.network.connection.TeraGameConnection;
 import com.angelis.tera.game.network.packet.server.SM_ABNORMALITY_BEGIN;
 import com.angelis.tera.game.network.packet.server.SM_CREATURE_INSTANCE_ARROW;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_SKILL_LIST;
@@ -119,8 +120,9 @@ public class SkillService extends AbstractService {
         skill.setRequiredLevel(1);
         player.getSkillList().learnSkill(skill);
 
-        player.getConnection().sendPacket(SystemMessages.YOU_HAVE_LEARNED_SKILL(String.valueOf(skillId), "112"));
-        player.getConnection().sendPacket(new SM_PLAYER_SKILL_LIST(player));
+        final TeraGameConnection connection = player.getConnection();
+        connection.sendPacket(SystemMessages.YOU_HAVE_LEARNED_SKILL(String.valueOf(skillId), "112"));
+        connection.sendPacket(new SM_PLAYER_SKILL_LIST(player));
     }
 
     public void unlearnSkill(final Player player, final Integer skillId) {

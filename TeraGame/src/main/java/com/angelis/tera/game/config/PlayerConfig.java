@@ -27,4 +27,7 @@ public class PlayerConfig {
 
     @Property(key = "player.rest.rate", defaultValue = "10")
     public static long PLAYER_REST_RATE;
+    
+    @Property(key = "player.reaper.require.player.min.level", defaultValue = "40")
+    public static int PLAYER_REAPER_REQUIRE_PLAYER_MIN_LEVEL = 40;
 }

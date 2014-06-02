@@ -48,4 +48,10 @@
         <player_item itemId="15008" slot="GLOVES" />
         <player_item itemId="15009" slot="FOOT" />
     </player_itemset>
+    <player_itemset targetClass="REAPER">
+        <player_item itemId="80396" slot="WEAPON" />
+        <player_item itemId="80397" slot="ARMOR" />
+        <player_item itemId="80398" slot="GLOVES" />
+        <player_item itemId="80399" slot="FOOT" />
+    </player_itemset>
 </player_itemsets>

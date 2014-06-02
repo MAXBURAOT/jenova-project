@@ -12,6 +12,8 @@ import org.apache.log4j.Logger;
 import com.angelis.tera.game.config.GlobalConfig;
 import com.angelis.tera.game.config.PlayerConfig;
 import com.angelis.tera.game.delegate.database.PlayerDelegate;
+import com.angelis.tera.game.models.account.Account;
+import com.angelis.tera.game.models.chainedaction.AbstractChainedAction;
 import com.angelis.tera.game.models.chainedaction.GatherChainedAction;
 import com.angelis.tera.game.models.creature.Creature;
 import com.angelis.tera.game.models.creature.TeraCreature;
@@ -21,13 +23,12 @@ import com.angelis.tera.game.models.enums.ObjectFamilyEnum;
 import com.angelis.tera.game.models.gather.Gather;
 import com.angelis.tera.game.models.player.Player;
 import com.angelis.tera.game.models.player.PlayerRelation;
-import com.angelis.tera.game.models.player.craft.CraftStats;
 import com.angelis.tera.game.models.player.enums.EmoteEnum;
 import com.angelis.tera.game.models.player.enums.GenderEnum;
+import com.angelis.tera.game.models.player.enums.PlayerClassEnum;
 import com.angelis.tera.game.models.player.enums.PlayerModeEnum;
 import com.angelis.tera.game.models.player.enums.PlayerMoveTypeEnum;
 import com.angelis.tera.game.models.player.enums.RaceEnum;
-import com.angelis.tera.game.models.player.gather.GatherStats;
 import com.angelis.tera.game.models.skill.SkillArgs;
 import com.angelis.tera.game.models.visible.WorldPosition;
 import com.angelis.tera.game.models.visible.enums.VisibleTypeEnum;
@@ -35,7 +36,8 @@ import com.angelis.tera.game.network.SystemMessages;
 import com.angelis.tera.game.network.connection.TeraGameConnection;
 import com.angelis.tera.game.network.enums.CheckCharacterNameResponse;
 import com.angelis.tera.game.network.packet.server.SM_CHARACTER_CREATE;
-import com.angelis.tera.game.network.packet.server.SM_PLAYER_BIND;
+import com.angelis.tera.game.network.packet.server.SM_CHARACTER_USERNAME_CHECK;
+import com.angelis.tera.game.network.packet.server.SM_LOAD_TOPO;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_BLOCK_ADD_SUCCESS;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_EXPERIENCE_UPDATE;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_FRIEND_ADD_SUCCESS;
@@ -43,14 +45,14 @@ import com.angelis.tera.game.network.packet.server.SM_PLAYER_FRIEND_LIST;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_FRIEND_REMOVE_SUCCESS;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_SELECT_CREATURE;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_SET_TITLE;
-import com.angelis.tera.game.network.packet.server.SM_PLAYER_STATS;
+import com.angelis.tera.game.network.packet.server.SM_PLAYER_STATS_UPDATE;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_ZONE_CHANGE;
-import com.angelis.tera.game.network.packet.server.SM_RESPONSE_CHARACTER_NAME_CHECK_USED;
 import com.angelis.tera.game.network.packet.server.SM_SOCIAL;
 import com.angelis.tera.game.tasks.TaskTypeEnum;
 import com.angelis.tera.game.tasks.creature.CreatureStatsModifierTask;
 import com.angelis.tera.game.tasks.player.PlayerAutoSaveTask;
 import com.angelis.tera.game.tasks.player.PlayerDeleteTask;
+import com.angelis.tera.game.utils.GroupUtils;
 import com.angelis.tera.game.xml.entity.players.PlayerExperienceEntity;
 import com.angelis.tera.game.xml.entity.players.PlayerExperienceEntityHolder;
 
@@ -80,8 +82,8 @@ public class PlayerService extends AbstractService {
     }
 
     // ---- EVENT ---- //
-    public final void onPlayerCreate(final Player player) {
-        player.getConnection().sendPacket(new SM_CHARACTER_CREATE(true));
+    public final void onPlayerCreate(final Player player, final boolean creationSuccess) {
+        player.getConnection().sendPacket(new SM_CHARACTER_CREATE(creationSuccess));
     }
 
     public final void onPlayerDelete(final Player player) {
@@ -123,7 +125,7 @@ public class PlayerService extends AbstractService {
     }
 
     public void onPlayerCheckNameUsed(final TeraGameConnection connection, final short type, final String name) {
-        connection.sendPacket(new SM_RESPONSE_CHARACTER_NAME_CHECK_USED((this.findPlayerByName(name) == null)));
+        connection.sendPacket(new SM_CHARACTER_USERNAME_CHECK((this.findPlayerByName(name) == null)));
     }
 
     public void onPlayerMove(final Player player, final float x1, final float y1, final float z1, final short heading, final float x2, final float y2, final float z2, final PlayerMoveTypeEnum moveType, final byte[] unk2, final int unk3) {
@@ -134,7 +136,6 @@ public class PlayerService extends AbstractService {
         VisibleService.getInstance().onPlayerMove(player);
         DialogService.getInstance().onPlayerMove(player);
         BattleService.getInstance().onPlayerMove(player);
-        QuestService.getInstance().onPlayerMove(player);
         
         if (player.getController().getChainedAction() != null) {
             player.getController().getChainedAction().cancel();
@@ -157,10 +158,11 @@ public class PlayerService extends AbstractService {
 
     public void onPlayerLevelUp(final Player player) {
         BaseStatService.getInstance().onPlayerLevelUp(player);
+        QuestService.getInstance().onPlayerLevelUp(player);
         
         final TeraGameConnection connection = player.getConnection();
         connection.sendPacket(SystemMessages.CONGRATULATION_YOU_ARE_LEVEL(String.valueOf(player.getLevel())));
-        connection.sendPacket(new SM_PLAYER_STATS(player));
+        connection.sendPacket(new SM_PLAYER_STATS_UPDATE(player));
     }
 
     public void onPlayerBlock(final Player player, final String playerName) {
@@ -265,8 +267,17 @@ public class PlayerService extends AbstractService {
         }
         
         final Gather gather = (Gather) ObjectIDService.getInstance().getObjectFromUId(objectFamily, uid);
+        AbstractChainedAction chainedAction = null;
+        if (gather.getGatherer() != null) {
+            if (!GroupUtils.isInSameGroup(player, gather.getGatherer())) {
+                return;
+            }
+
+            chainedAction = gather.getGatherer().getController().getChainedAction();
+        } else {
+            chainedAction = new GatherChainedAction(player, gather);
+        }
         
-        final GatherChainedAction chainedAction = new GatherChainedAction(player, gather);
         player.getController().setChainedAction(chainedAction);
         chainedAction.start();
     }
@@ -321,33 +332,37 @@ public class PlayerService extends AbstractService {
 
     /** CRUD OPERATIONS */
     public void createPlayer(final TeraGameConnection connection, final Player player) {
-        player.setAccount(connection.getAccount());
+        final Account account = connection.getAccount();
+        player.setAccount(account);
         
-        // Fix for elin
+        // Fix for elin & popori
         if (player.getRace().value == 4) {
             if (player.getGender() == GenderEnum.FEMALE) {
                 player.setRace(RaceEnum.ELIN);
+            } else {
+                player.setRace(RaceEnum.POPORI);
             }
         }
 
-        // TODO
-        player.setUserSettings("0800B0020897561204322343505250089756522E5300310053006B0069006C006C0048006F0074004B006500790043006F006E00740072006F006C006C0065007200A201140897564A0433003200520908E907100018012028F00100C002145271089756522853003100530068006F007200740043007500740043006F006E00740072006F006C006C0065007200A2013B78DAE3981E16C0B08091F11013070783009B448A42ED21264E20931DC83C6E07614B483028DCF03FC4C405644B02D92D7319273033000069400BC0F00101C0023B5269089756523653003100450071007500690070006D0065006E00740050007200650073006500740043006F006E00740072006F006C006C0065007200A2012478DAE3D81F26C421C020C1A0C0A0C130CA1A658DB24659C38D250187409E2400DBEB4559F00101C002F309524408975652265300310043007500730074006F006D0069007A0065004B0065007900470072006F0075007000A20110089756120B10E0011800200028003000F00100C00210525B08975652325300310043007500730074006F006D0069007A00650050006100640042007500740074006F006E00470072006F0075007000A2011B0897561A16580062006F007800540079007000650053005F005800F00100C0021B523B0897565228530031004E00500043004700750069006C00640043006F006E00740072006F006C006C0065007200A201050897565000F00100C00205525908975652385300310053006B0069006C006C004300720065007300740050007200650073006500740043006F006E00740072006F006C006C0065007200A2011378DAE3D81827C100830AFF6180110057F60AA8F00101C00218523A089756522A5300310049006E00760065006E0074006F007200790043006F006E00740072006F006C006C0065007200A201020800F00100C00202".getBytes());
-        
-        StorageService.getInstance().onPlayerCreate(player);
-        WorldService.getInstance().onPlayerCreate(player);
-        BaseStatService.getInstance().onPlayerCreate(player);
-        SkillService.getInstance().onPlayerCreate(player);
-        QuestService.getInstance().onPlayerCreate(player);
+        final boolean creationSuccess = checkPlayerRequiremens(account, player);
+        if (creationSuccess) {
+            // TODO
+            player.setUserSettings("0800B0020897561204322343505250089756522E5300310053006B0069006C006C0048006F0074004B006500790043006F006E00740072006F006C006C0065007200A201140897564A0433003200520908E907100018012028F00100C002145271089756522853003100530068006F007200740043007500740043006F006E00740072006F006C006C0065007200A2013B78DAE3981E16C0B08091F11013070783009B448A42ED21264E20931DC83C6E07614B483028DCF03FC4C405644B02D92D7319273033000069400BC0F00101C0023B5269089756523653003100450071007500690070006D0065006E00740050007200650073006500740043006F006E00740072006F006C006C0065007200A2012478DAE3D81F26C421C020C1A0C0A0C130CA1A658DB24659C38D250187409E2400DBEB4559F00101C002F309524408975652265300310043007500730074006F006D0069007A0065004B0065007900470072006F0075007000A20110089756120B10E0011800200028003000F00100C00210525B08975652325300310043007500730074006F006D0069007A00650050006100640042007500740074006F006E00470072006F0075007000A2011B0897561A16580062006F007800540079007000650053005F005800F00100C0021B523B0897565228530031004E00500043004700750069006C00640043006F006E00740072006F006C006C0065007200A201050897565000F00100C00205525908975652385300310053006B0069006C006C004300720065007300740050007200650073006500740043006F006E00740072006F006C006C0065007200A2011378DAE3D81827C100830AFF6180110057F60AA8F00101C00218523A089756522A5300310049006E00760065006E0074006F007200790043006F006E00740072006F006C006C0065007200A201020800F00100C00202".getBytes());
+            
+            QuestService.getInstance().onPlayerCreate(player);
+            StorageService.getInstance().onPlayerCreate(player);
+            WorldService.getInstance().onPlayerCreate(player);
+            BaseStatService.getInstance().onPlayerCreate(player);
+            SkillService.getInstance().onPlayerCreate(player);
+            CraftService.getInstance().onPlayerCreate(player);
+            GatherService.getInstance().onPlayerCreate(player);
+    
+            PlayerDelegate.createPlayerModel(player);
+            player.setAccount(account);
+            account.addPlayer(player);
+        }
 
-        // crafts
-        player.setCraftStats(new CraftStats());
-        player.setGatherStats(new GatherStats());
-
-        PlayerDelegate.createPlayerModel(player);
-        player.setAccount(connection.getAccount());
-        connection.getAccount().addPlayer(player);
-        
-        this.onPlayerCreate(player);
+        this.onPlayerCreate(player, creationSuccess);
     }
 
     public void deletePlayer(final int playerId) {
@@ -400,7 +415,7 @@ public class PlayerService extends AbstractService {
         worldPosition.setXYZ(x, y, z);
         
         player.getKnownList().clear();
-        player.getConnection().sendPacket(new SM_PLAYER_BIND(player));
+        player.getConnection().sendPacket(new SM_LOAD_TOPO(player));
         try {
             Thread.sleep(2000);
         }
@@ -435,6 +450,20 @@ public class PlayerService extends AbstractService {
     
     public void removeMoney(final Player player, final Integer quantity) {
         player.removeMoney(quantity);
+    }
+    
+    private boolean checkPlayerRequiremens(final Account account, final Player player) {
+        boolean creationSuccess = true;
+        
+        // Admin accounts doesn't have any restrictions
+        if (account.getAccess() == 0) {
+            if (player.getPlayerClass() == PlayerClassEnum.REAPER) {
+                if (!account.haveCharacterWithLevel(PlayerConfig.PLAYER_REAPER_REQUIRE_PLAYER_MIN_LEVEL)) {
+                    creationSuccess = false;
+                }
+            }
+        }
+        return creationSuccess;
     }
 
     /** SINGLETON */

@@ -7,8 +7,8 @@ import javolution.util.FastList;
 import com.angelis.tera.game.config.GlobalConfig;
 import com.angelis.tera.game.models.TeraObject;
 import com.angelis.tera.game.models.creature.Creature;
-import com.angelis.tera.game.models.creature.VisibleObjectEventTypeEnum;
 import com.angelis.tera.game.models.creature.TeraCreature;
+import com.angelis.tera.game.models.creature.VisibleObjectEventTypeEnum;
 import com.angelis.tera.game.models.drop.DropItem;
 import com.angelis.tera.game.models.enums.DespawnTypeEnum;
 import com.angelis.tera.game.models.group.Group;
@@ -22,6 +22,7 @@ import com.angelis.tera.game.services.CreatureService;
 import com.angelis.tera.game.services.DropService;
 import com.angelis.tera.game.services.GroupService;
 import com.angelis.tera.game.services.PlayerService;
+import com.angelis.tera.game.services.QuestService;
 import com.angelis.tera.game.services.SpawnService;
 import com.angelis.tera.game.services.VisibleService;
 
@@ -45,6 +46,7 @@ public class CreatureController extends Controller<TeraCreature> {
     @Override
     public void onDie(final VisibleTeraObject killer) {
         this.owner.getAggroList().clear();
+        QuestService.getInstance().onPlayerCreatureKill((Player) killer, this.owner);
 
         if (killer instanceof Player) {
             final Player player = (Player) killer;

@@ -4,8 +4,6 @@ import java.nio.ByteBuffer;
 
 import com.angelis.tera.game.network.connection.TeraGameConnection;
 import com.angelis.tera.game.network.packet.TeraClientPacket;
-import com.angelis.tera.game.network.packet.server.SM_OPCODE_LESS_PACKET;
-import com.angelis.tera.game.network.packet.server.SM_SYSTEM_INFO;
 import com.angelis.tera.game.services.AccountService;
 
 public class CM_HARDWARE_INFO extends TeraClientPacket {
@@ -36,8 +34,6 @@ public class CM_HARDWARE_INFO extends TeraClientPacket {
 
     @Override
     protected void runImpl() {
-        AccountService.getInstance().registerHardwareInfo(this.osName, this.cpuName, this.gpuName);
-        this.getConnection().sendPacket(new SM_SYSTEM_INFO());
-        this.getConnection().sendPacket(new SM_OPCODE_LESS_PACKET("C0CC0100080008000000B2010000FFFFFF7F00000000"));
+        AccountService.getInstance().registerHardwareInfo(this.getConnection().getAccount(), this.osName, this.cpuName, this.gpuName);
     }
 }

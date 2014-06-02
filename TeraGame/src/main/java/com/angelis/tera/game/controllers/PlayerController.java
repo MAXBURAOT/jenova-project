@@ -10,7 +10,6 @@ import com.angelis.tera.game.models.TeraObject;
 import com.angelis.tera.game.models.campfire.CampFire;
 import com.angelis.tera.game.models.chainedaction.AbstractChainedAction;
 import com.angelis.tera.game.models.creature.Creature;
-import com.angelis.tera.game.models.creature.Npc;
 import com.angelis.tera.game.models.creature.TeraCreature;
 import com.angelis.tera.game.models.creature.VisibleObjectEventTypeEnum;
 import com.angelis.tera.game.models.dialog.Dialog;
@@ -38,10 +37,11 @@ import com.angelis.tera.game.network.packet.server.SM_DROP_ITEM_SPAWN;
 import com.angelis.tera.game.network.packet.server.SM_GATHER_DESPAWN;
 import com.angelis.tera.game.network.packet.server.SM_GATHER_SPAWN;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_DESPAWN;
-import com.angelis.tera.game.network.packet.server.SM_SOCIAL;
+import com.angelis.tera.game.network.packet.server.SM_PLAYER_MOUNT;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_MOVE;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_SPAWN;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_STATE;
+import com.angelis.tera.game.network.packet.server.SM_SOCIAL;
 import com.angelis.tera.game.services.QuestService;
 import com.angelis.tera.game.services.VisibleService;
 
@@ -101,11 +101,35 @@ public class PlayerController extends Controller<Player> {
         switch (creatureEventType) {
             case APPEAR:
                 if (object instanceof Player) {
+                    final Player oPlayer = (Player) object;
+                    
                     // TODO player relation
-                    packets.add(new SM_PLAYER_SPAWN((Player) object, PlayerRelationEnum.FRIENDLY));
+                    PlayerRelationEnum playerRelation = PlayerRelationEnum.FRIENDLY;
+                    if (player.getGroup() != null && oPlayer.getGroup() != null) {
+                        if (player.getGroup().equals(oPlayer.getGroup())) {
+                            playerRelation = PlayerRelationEnum.PARTY_MEMBER;
+                        }
+                    }
+                    
+                    if (player.getGuild() != null && oPlayer.getGuild() != null) {
+                        if (player.getGuild().equals(oPlayer.getGuild())) {
+                            playerRelation = PlayerRelationEnum.GUILD_MEMBER;
+                        }
+                    }
+                    
+                    if (player.getActiveDuelPlayer() != null && player.getActiveDuelPlayer().equals(oPlayer)) {
+                        playerRelation = PlayerRelationEnum.DUEL_ENEMY;
+                    }
+                    packets.add(new SM_PLAYER_SPAWN(oPlayer, playerRelation));
+
+                    if (oPlayer.getActiveMount() != null)  {
+                        packets.add(new SM_PLAYER_MOUNT(oPlayer, oPlayer.getActiveMount()));
+                    }
                 }
                 else if (object instanceof TeraCreature) {
-                    packets.add(new SM_CREATURE_SPAWN((TeraCreature) object));
+                    final TeraCreature teraCreature = (TeraCreature) object;
+                    packets.add(new SM_CREATURE_SPAWN(teraCreature));
+                    QuestService.getInstance().updatePlayerQuestNpcVillageInfo(this.owner, packets, teraCreature);
                 }
                 else if (object instanceof Gather) {
                     final Gather gather = (Gather) object;
@@ -199,11 +223,6 @@ public class PlayerController extends Controller<Player> {
 
         for (final TeraServerPacket packet : packets) {
             player.getConnection().sendPacket(packet);
-        }
-        
-        // THIS SHOULD BE MOVED BUT MUST BE AFTER THE APPEAR PACKETS
-        if (object instanceof Npc) {
-            QuestService.getInstance().updatePlayerQuestNpcVillageInfo(this.owner);
         }
     }
 

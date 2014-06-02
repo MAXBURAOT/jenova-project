@@ -8,10 +8,12 @@ import com.angelis.tera.game.models.account.Account;
 import com.angelis.tera.game.models.account.Options;
 import com.angelis.tera.game.models.account.enums.AccountTypeEnum;
 import com.angelis.tera.game.network.connection.TeraGameConnection;
+import com.angelis.tera.game.network.packet.server.SM_ACCOUNT_PACKAGE_LIST;
 import com.angelis.tera.game.network.packet.server.SM_LOADING_SCREEN_CONTROL_INFO;
 import com.angelis.tera.game.network.packet.server.SM_LOGIN_ACCOUNT_INFO;
 import com.angelis.tera.game.network.packet.server.SM_LOGIN_ARBITER;
 import com.angelis.tera.game.network.packet.server.SM_REMAIN_PLAY_TIME;
+import com.angelis.tera.game.network.packet.server.SM_SYSTEM_INFO;
 
 public class AccountService extends AbstractService {
 
@@ -89,7 +91,8 @@ public class AccountService extends AbstractService {
         protected static final AccountService instance = new AccountService();
     }
 
-    public void registerHardwareInfo(final String osName, final String cpuName, final String gpuName) {
-        
+    public void registerHardwareInfo(final Account account, final String osName, final String cpuName, final String gpuName) {
+        account.getConnection().sendPacket(new SM_SYSTEM_INFO());
+        account.getConnection().sendPacket(new SM_ACCOUNT_PACKAGE_LIST());
     }
 }

@@ -24,6 +24,7 @@ public class DropMapper extends XMLListMapper<CreatureDropsEntity, Drop> {
         final List<Drop> drops = new FastList<>();
         for (final DropEntity dropEntity : entity.getDrops()) {
             final Drop drop = new Drop();
+            drop.setItemCategory(dropEntity.getItemCategory());
             drop.setDropChance(dropEntity.getDropChance());
             drop.setItemId(dropEntity.getItemId());
             drop.setMaxAmount(dropEntity.getMaxAmount());

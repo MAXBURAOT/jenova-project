@@ -1,12 +1,10 @@
 package com.angelis.tera.game.network.packet.server;
 
 import java.nio.ByteBuffer;
-import java.util.Map.Entry;
 
 import com.angelis.tera.game.models.enums.StorageTypeEnum;
 import com.angelis.tera.game.models.player.Player;
 import com.angelis.tera.game.models.storage.Storage;
-import com.angelis.tera.game.models.storage.StorageItem;
 import com.angelis.tera.game.models.storage.enums.InventorySlotEnum;
 import com.angelis.tera.game.network.connection.TeraGameConnection;
 import com.angelis.tera.game.network.packet.TeraServerPacket;
@@ -24,12 +22,22 @@ public class SM_PLAYER_APPEARANCE_CHANGE extends TeraServerPacket {
         final Storage storage = this.player.getStorage(StorageTypeEnum.INVENTORY);
 
         writeUid(byteBuffer, this.player);
-        for (final Entry<InventorySlotEnum, StorageItem> entry : storage.getStorageItems(Storage.PLAYER_EQUIPEMENT).entrySet()) {
-            final StorageItem storageItem = entry.getValue();
-            writeD(byteBuffer,  (storageItem != null) ? storageItem.getItem().getId() : 0);
-        }
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.WEAPON, Storage.NEW_STORAGE_ITEM).getItemId());
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.ARMOR, Storage.NEW_STORAGE_ITEM).getItemId());
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.GLOVES, Storage.NEW_STORAGE_ITEM).getItemId());
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.FOOT, Storage.NEW_STORAGE_ITEM).getItemId());
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.HAIR, Storage.NEW_STORAGE_ITEM).getItemId());
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.FACE, Storage.NEW_STORAGE_ITEM).getItemId());
         
-        writeB(byteBuffer, new byte[68]);
+        writeB(byteBuffer, new byte[44]);
+        
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.HAIR_DECORATION, Storage.NEW_STORAGE_ITEM).getItemId()); //Item (Skin Head)
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.MASK, Storage.NEW_STORAGE_ITEM).getItemId()); //Item (Skin Face)
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.BACK, Storage.NEW_STORAGE_ITEM).getItemId()); //Item (Skin Backpack)?
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.WEAPON_APPEARANCE, Storage.NEW_STORAGE_ITEM).getItemId()); //Item (Skin Weapon)
+        writeD(byteBuffer, storage.getStorageItemByInventorySlot(InventorySlotEnum.ARMOR_APPEARANCE, Storage.NEW_STORAGE_ITEM).getItemId()); //Item (Skin Armor)
+        writeD(byteBuffer, 0); //Unk possible Item?
+        
         writeC(byteBuffer, 1);
     }
 

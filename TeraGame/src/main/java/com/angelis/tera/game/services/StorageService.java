@@ -16,17 +16,18 @@ import org.apache.log4j.Logger;
 import com.angelis.tera.game.models.enums.StorageTypeEnum;
 import com.angelis.tera.game.models.item.Item;
 import com.angelis.tera.game.models.player.Player;
+import com.angelis.tera.game.models.player.enums.PlayerClassEnum;
 import com.angelis.tera.game.models.storage.Storage;
 import com.angelis.tera.game.models.storage.StorageItem;
 import com.angelis.tera.game.models.storage.enums.InventorySizeEnum;
 import com.angelis.tera.game.network.SystemMessages;
 import com.angelis.tera.game.network.connection.TeraGameConnection;
+import com.angelis.tera.game.network.packet.server.SM_INVENTORY;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_APPEARANCE_CHANGE;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_GATHER_STATS;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_INVENTORY_SLOT_CHANGED;
 import com.angelis.tera.game.network.packet.server.SM_PLAYER_STATE;
-import com.angelis.tera.game.network.packet.server.SM_PLAYER_STATS;
-import com.angelis.tera.game.network.packet.server.SM_PLAYER_STORAGE;
+import com.angelis.tera.game.network.packet.server.SM_PLAYER_STATS_UPDATE;
 import com.angelis.tera.game.xml.entity.players.PlayerItemEntity;
 import com.angelis.tera.game.xml.entity.players.PlayerItemSetEntity;
 import com.angelis.tera.game.xml.entity.players.PlayerItemSetEntityHolder;
@@ -50,6 +51,9 @@ public class StorageService extends AbstractService {
         final Set<Storage> storages = new FastSet<>();
         final Storage inventoryStorage = new Storage(StorageTypeEnum.INVENTORY);
         inventoryStorage.setSize(InventorySizeEnum.FIRST.value);
+        if (player.getPlayerClass() == PlayerClassEnum.REAPER) {
+            inventoryStorage.setSize(InventorySizeEnum.SECOND.value);
+        }
         storages.add(inventoryStorage);
 
         storages.add(new Storage(StorageTypeEnum.PLAYER_WAREHOUSE));
@@ -78,6 +82,7 @@ public class StorageService extends AbstractService {
             switch (storage.getStorageType()) {
                 case INVENTORY:
                     player.addMoney(itemAmount);
+                    player.getConnection().sendPacket(SystemMessages.MONEY_ADD(String.valueOf(itemAmount)));
                 break;
 
                 default:
@@ -108,6 +113,7 @@ public class StorageService extends AbstractService {
             connection.sendPacket(new SM_PLAYER_INVENTORY_SLOT_CHANGED(Arrays.asList(storage.getSlot(storageItem))));
         }
 
+        QuestService.getInstance().onPlayerPickupItem(player, storageItem.getItem());
         return true;
     }
 
@@ -207,7 +213,7 @@ public class StorageService extends AbstractService {
 
         final TeraGameConnection connection = player.getConnection();
         if (isEquip || isUnequip) {
-            connection.sendPacket(new SM_PLAYER_STATS(player));
+            connection.sendPacket(new SM_PLAYER_STATS_UPDATE(player));
             connection.sendPacket(new SM_PLAYER_GATHER_STATS(player.getGatherStats()));
             connection.sendPacket(new SM_PLAYER_STATE(player));
         }
@@ -260,7 +266,7 @@ public class StorageService extends AbstractService {
     public final void showStorage(final Player player, final Storage storage, final boolean showInventory) {
         switch (storage.getStorageType()) {
             case INVENTORY:
-                player.getConnection().sendPacket(new SM_PLAYER_STORAGE(player, showInventory));
+                player.getConnection().sendPacket(new SM_INVENTORY(player, showInventory));
             break;
 
             default:
